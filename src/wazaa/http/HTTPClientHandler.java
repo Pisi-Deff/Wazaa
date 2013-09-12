@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.Socket;
-import java.nio.file.Files;
 import java.nio.file.InvalidPathException;
 import java.util.HashMap;
 import java.util.Map;
@@ -131,6 +130,7 @@ public class HTTPClientHandler extends Thread {
 						JsonObject json = null;
 						try {
 							json = JsonObject.readFrom(data);
+							//TODO: handle data
 						} catch (ParseException | UnsupportedOperationException e) {
 							answer = "1";
 						}
@@ -141,7 +141,7 @@ public class HTTPClientHandler extends Thread {
 							answer);
 				}
 
-				if (resp != null) {
+				if (resp != null && !socket.isClosed()) {
 					output.write(resp.getResponse());
 				}
 			}
