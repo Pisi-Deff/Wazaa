@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.Socket;
+import java.net.URLEncoder;
 import java.nio.file.InvalidPathException;
 import java.util.HashMap;
 import java.util.Map;
@@ -91,6 +92,7 @@ public class HTTPClientHandler extends Thread {
 								String[] fileNameParts = fileName.split("[/\\\\]");
 								String fileNameShort = 
 										fileNameParts[fileNameParts.length - 1];
+								fileNameShort = URLEncoder.encode(fileNameShort, "UTF-8");
 								resp.setHeader(
 										"Content-Disposition",
 										"attachment; filename=\""
