@@ -10,14 +10,6 @@ public class HTTPResponse404 extends HTTPResponse {
 	}
 	
 	public static String createBody() {
-		return "<html>\n"
-				+ "<head>\n" +
-				"<title>404 Not Found</title>\n</head>\n"
-				+ "<body>\n"
-				+ "404 Not Found\n"
-				+ "<br /><br />\n"
-				+ "Usage: http://host:port/command?args\n"
-				+ "</body>\n"
-				+ "</html>";
+		return "1";
 	}
 }
