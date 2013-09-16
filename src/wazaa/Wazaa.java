@@ -12,6 +12,7 @@ import java.nio.file.Files;
 import java.nio.file.InvalidPathException;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.UUID;
 
 import com.eclipsesource.json.JsonArray;
@@ -114,6 +115,10 @@ public class Wazaa {
 			System.out.println("Skipping invalid machine: " + IPStr
 					+ " - " + PortStr);
 		}
+	}
+	
+	public static Iterator<Machine> getMachinesIterator() {
+		return machines.iterator();
 	}
 	
 	public static Path getShareFilePath(String fileName) 
