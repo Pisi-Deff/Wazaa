@@ -1,17 +1,76 @@
 package wazaa.http;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.net.HttpURLConnection;
+import java.net.URL;
+
+import wazaa.Machine;
+import wazaa.Wazaa;
+
 /**
  * Class for sending HTTP requests to other Wazaas.
- * Propagates searchfile requests, sends foundfiles, gets files.
+ * Used to propagate searchfile requests, send foundfiles, get files.
  * @author Eerik
  */
 public class HTTPClient extends Thread {
-	public HTTPClient() {
+	private String method;
+	private String postContent;
+	
+	private URL url;
+	
+	public HTTPClient(Machine machine, String method, String command)
+			throws IOException {
+		this(machine, method, command, null);
+	}
+	
+	public HTTPClient(Machine machine, String method,
+			String command, String postContent)
+			throws IOException {
+		this.method = method.toUpperCase();
+		if (this.method.equals("POST")) {
+			if (postContent == null) {
+				throw new IllegalArgumentException();
+			} else {
+				this.postContent = postContent;
+			}
+		}
 		
+		this.url = new URL("http://" + machine.getIP().getHostAddress()
+				+ ":" + machine.getPort() + "/" + command);
 	}
 	
 	@Override
 	public void run() {
-		
+		try {
+			HttpURLConnection conn = 
+					(HttpURLConnection) url.openConnection();
+			conn.setRequestMethod(method);
+			conn.setRequestProperty("User-Agent", 
+					Wazaa.WAZAANAME + " v" + Wazaa.WAZAAVER);
+			if (method.equals("POST") && postContent != null) {
+				conn.setDoOutput(true);
+				conn.setRequestProperty("Content-Type", "application/json");
+				BufferedWriter out = new BufferedWriter(
+						new OutputStreamWriter(conn.getOutputStream()));
+				out.write(postContent);
+				out.close();
+			}
+			conn.connect();
+			BufferedReader in = new BufferedReader(
+					new InputStreamReader(conn.getInputStream()));
+			String line = in.readLine();
+			if (line == null) {
+				line = "";
+			}
+			System.out.println("HTTPClient made connection to <"
+					+ url.toString() + ">: "
+					+ " (" + conn.getResponseCode() + ") "
+					+ line);
+			in.close();
+		} catch (IOException e) { }
 	}
 }
