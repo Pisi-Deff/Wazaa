@@ -20,10 +20,6 @@ public class Machine {
 	public int getPort() {
 		return port;
 	}
-	
-	public void doRequest() {
-		//TODO
-	}
 
 	@Override
 	public int hashCode() {
