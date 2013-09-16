@@ -9,7 +9,7 @@ public abstract class HTTPResponse {
 	private int returnCode;
 	private String returnString;
 	
-	private Map<String, String> headers = new HashMap<String, String>();
+	private Map<String, String> extraHeaders = new HashMap<String, String>();
 	
 	private String contentType;
 	private byte[] body;
@@ -37,11 +37,12 @@ public abstract class HTTPResponse {
 		StringBuilder s = new StringBuilder();
 		s.append(HTTPVER + " " + returnCode + " " + returnString + CRLF);
 		s.append("Server: " + Wazaa.WAZAANAME + " v" + Wazaa.WAZAAVER + CRLF);
+		s.append("Connection: close" + CRLF);
 		s.append("Content-Type: " + contentType + CRLF);
 		s.append("Content-Length: " + getBody().length + CRLF);
 		
-		for (String head : headers.keySet()) {
-			s.append(head + ": " + headers.get(head) + CRLF);
+		for (String head : extraHeaders.keySet()) {
+			s.append(head + ": " + extraHeaders.get(head) + CRLF);
 		}
 		
 		s.append(CRLF);
@@ -53,16 +54,22 @@ public abstract class HTTPResponse {
 	}
 	
 	public byte[] getResponse() {
-		byte[] headers = getHeaders().getBytes();
-		byte[] resp = new byte[headers.length + getBody().length];
-		System.arraycopy(headers, 0, resp, 0, headers.length);
-		System.arraycopy(getBody(), 0, resp, headers.length, getBody().length);
+		byte[] headerBytes = getHeaders().getBytes();
+		byte[] resp;
+		if (getBody().length > 0) {
+			resp = new byte[headerBytes.length + getBody().length];
+			System.arraycopy(extraHeaders, 0, resp, 0, headerBytes.length);
+			System.arraycopy(getBody(), 0, resp, headerBytes.length, 
+					getBody().length);
+		} else {
+			resp = headerBytes;
+		}
 		return resp;
 	}
 
 	public void setHeader(String header, String value) {
 		if (header != null && value != null) {
-			headers.put(header, value);
+			extraHeaders.put(header, value);
 		}
 	}
 }
