@@ -93,7 +93,8 @@ public class HTTPClientHandler extends Thread {
 							if (!name.isEmpty()
 									&& sendport > 0 && sendport < 65535
 									&& ttl >= 0) {
-								
+								//TODO do search
+								//TODO send to all machines
 							}
 						} catch (NumberFormatException e) { }
 					}
@@ -113,7 +114,8 @@ public class HTTPClientHandler extends Thread {
 								String[] fileNameParts = fileName.split("[/\\\\]");
 								String fileNameShort = 
 										fileNameParts[fileNameParts.length - 1];
-								fileNameShort = URLEncoder.encode(fileNameShort, "UTF-8");
+								fileNameShort = 
+										URLEncoder.encode(fileNameShort, "UTF-8");
 								resp.setHeader(
 										"Content-Disposition",
 										"attachment; filename=\""
@@ -154,7 +156,8 @@ public class HTTPClientHandler extends Thread {
 						try {
 							json = JsonObject.readFrom(data);
 							//TODO: handle data
-						} catch (ParseException | UnsupportedOperationException e) {
+						} catch (ParseException | 
+								UnsupportedOperationException e) {
 							answer = "1";
 						}
 					}
