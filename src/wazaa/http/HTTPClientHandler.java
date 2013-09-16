@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.net.InetAddress;
 import java.net.Socket;
 import java.net.URLEncoder;
 import java.nio.file.InvalidPathException;
@@ -76,7 +77,27 @@ public class HTTPClientHandler extends Thread {
 					 * noask: optsionaalne list masinatest, kellelt 
 					 * 			pole mõtet küsida (eraldajaks alakriips) 
 					 */
-					resp = new HTTPResponse200("text/plain", "srchf");
+					String answer = "1";
+					if (commandArgs.containsKey("name") 
+							&& commandArgs.containsKey("sendip")
+							&& commandArgs.containsKey("sendport")
+							&& commandArgs.containsKey("ttl")) {
+						try {
+							String name = commandArgs.get("name");
+							InetAddress sendip = 
+									InetAddress.getByName(commandArgs.get("sendip"));
+							int sendport = 
+									Integer.parseInt(commandArgs.get("sendport"));
+							int ttl = 
+									Integer.parseInt(commandArgs.get("ttl"));
+							if (!name.isEmpty()
+									&& sendport > 0 && sendport < 65535
+									&& ttl >= 0) {
+								
+							}
+						} catch (NumberFormatException e) { }
+					}
+					resp = new HTTPResponse200("text/plain", answer);
 				} else if (command.startsWith("/getfile")) {
 					/*
 					 * fullname=fullfilename
