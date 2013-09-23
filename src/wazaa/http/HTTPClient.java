@@ -43,6 +43,8 @@ public class HTTPClient extends Thread {
 				+ ":" + machine.getPort() + "/" + command);
 	}
 	
+	// TODO store response content and add method to retrieve it.
+	
 	@Override
 	public void run() {
 		try {
