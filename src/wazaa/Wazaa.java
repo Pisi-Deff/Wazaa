@@ -15,16 +15,20 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.UUID;
 
+import javafx.application.Application;
+
 import com.eclipsesource.json.JsonArray;
 import com.eclipsesource.json.JsonValue;
 
 import wazaa.http.HTTPServer;
+import wazaa.ui.WazaaJFXGUI;
 
 public class Wazaa {
 	public static final String WAZAANAME = "Wazaa";
 	public static final String WAZAAVER = "0.1";
 	
-	private static HTTPServer srv = null;
+	private static WazaaJFXGUI gui = new WazaaJFXGUI();
+	
 	public static final int DEFAULTPORT = 1215;
 	private static int port = DEFAULTPORT;
 	
@@ -43,8 +47,10 @@ public class Wazaa {
 		
 		getMachinesFromFile(MACHINESFILE);
 		
-		srv = new HTTPServer(port);
-		srv.start();
+		new HTTPServer(port);
+		
+		gui.start(args);
+		// TODO launch srv via GUI
 	}
 
 	private static void parseArgs(String[] args) {
@@ -110,6 +116,7 @@ public class Wazaa {
 	public static void addMachine(String IPStr, String PortStr) {
 		try {
 			Machine m = new Machine(IPStr, PortStr);
+			// TODO ignore own ip+port
 			if (!machines.contains(m)) {
 				machines.add(m);
 				System.out.println("Added machine: "
