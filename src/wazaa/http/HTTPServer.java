@@ -9,6 +9,7 @@ public class HTTPServer extends Thread {
 
 	public HTTPServer(int port) {
 		this.port = port;
+		start();
 	}
 
 	@Override
