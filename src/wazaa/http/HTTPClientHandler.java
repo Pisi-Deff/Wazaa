@@ -9,6 +9,7 @@ import java.net.Socket;
 import java.net.URLEncoder;
 import java.net.UnknownHostException;
 import java.nio.file.InvalidPathException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -67,126 +68,20 @@ public class HTTPClientHandler extends Thread {
 				if (commandBits.length > 1) {
 					commandArgs = getCommandArgsFromString(commandBits[1]);
 				}
-				
-				HTTPResponse resp = new HTTPResponse404();
+
+				HTTPResponse resp = null;
 				
 				if (command.startsWith("/searchfile")) {
-					/*
-					 * name: otsitav string (peab olema failinimes)
-					 * sendip: esialgse otsija ip
-					 * sendport: esialgse otsija port
-					 * ttl: kui mitu otsingu-hopi veel teha 
-					 * 		(iga edasiküsimine vähendab ühe võrra)
-					 * id: optsionaalne päringu identifikaator
-					 * noask: optsionaalne list masinatest, kellelt 
-					 * 			pole mõtet küsida (eraldajaks alakriips) 
-					 */
-					String answer = "1";
-					if (commandArgs.containsKey("name") 
-							&& commandArgs.containsKey("sendip")
-							&& commandArgs.containsKey("sendport")
-							&& commandArgs.containsKey("ttl")) {
-						try {
-							String name = commandArgs.get("name");
-							InetAddress sendip = 
-									InetAddress.getByName(
-											commandArgs.get("sendip"));
-							int sendport = 
-									Integer.parseInt(
-											commandArgs.get("sendport"));
-							int ttl = 
-									Integer.parseInt(
-											commandArgs.get("ttl"));
-							if (!name.isEmpty()
-									&& sendport > 0 && sendport < 65535
-									&& ttl >= 0) {
-								if (ttl > 1) {
-									Iterator<Machine> iter = 
-											Wazaa.getMachinesIterator();
-									while (iter.hasNext()) {
-										Machine m = iter.next();
-										HTTPClient c = new HTTPClient(
-												m, "GET",
-												buildSearchFileCommand(
-														commandArgs));
-										c.run();
-									}
-								}
-								//TODO do search
-								answer = "0";
-							}
-						} catch (NumberFormatException
-								| UnknownHostException e) { }
-					}
-					resp = new HTTPResponse200("text/plain", answer);
+					resp = doSearchFile(commandArgs);
 				} else if (command.startsWith("/getfile")) {
-					/*
-					 * fullname=fullfilename
-					 */
-					if (commandArgs != null
-							&& commandArgs.containsKey("fullname")) {
-						String fileName = commandArgs.get("fullname");
-						if (fileName != null) {
-							try {
-								resp = new HTTPResponse200(
-										FileIOUtil.getFileContentType(fileName),
-										FileIOUtil.getFileBytes(fileName));
-								String[] fileNameParts = 
-										fileName.split("[/\\\\]");
-								String fileNameShort = 
-										fileNameParts[fileNameParts.length - 1];
-								fileNameShort = 
-										URLEncoder.encode(
-												fileNameShort, "UTF-8");
-								resp.setHeader(
-										"Content-Disposition",
-										"attachment; filename=\""
-												+ fileNameShort + "\"");
-							} catch (IOException | InvalidPathException e) { }
-						}
-					}
+					resp = doGetFile(commandArgs);
 				} else if (command.startsWith("/foundfile")
 						&& headerTok.equalsIgnoreCase("POST")) {
-					/*
-					 * {
-					 *   "id": "wqeqwe23",
-					 *	 "files":
-					 *   [
-					 *    {"ip":"11.22.33.66", "port":"5678", "name":"minufail1.txt"},
-					 *    {"ip":"11.22.33.68", "port":"5678", "name":"xxfail1yy.txt"}
-					 *   ]
-					 * }
-					 */
-					/*
-					 * Postituse saaja vastab eduka kättesaamise korral arvu 0,
-					 * arusaamatuste korral mõne muu (vea) numbri.
-					 */
-					String line = null;
-					boolean foundData = false;
-					String data = "";
-					while ((line = br.readLine()) != null) {
-						if (foundData) {
-							data += line + CRLF;
-						} else if (line.equals("")) {
-							foundData = true;
-						}
-					}
-
-					String answer = "0";
-					if (!data.isEmpty()) {
-						JsonObject json = null;
-						try {
-							json = JsonObject.readFrom(data);
-							//TODO: handle data
-						} catch (ParseException | 
-								UnsupportedOperationException e) {
-							answer = "1";
-						}
-					}
-
-					resp = new HTTPResponse200(
-							"text/plain", 
-							answer);
+					resp = doFoundFile();
+				}
+				
+				if (resp == null) {
+					resp = new HTTPResponse404();
 				}
 
 				if (resp != null && !socket.isClosed()) {
@@ -204,7 +99,147 @@ public class HTTPClientHandler extends Thread {
 				+ socket.getInetAddress().getHostAddress()
 				+ ":" + socket.getPort());
 	}
+
+	private HTTPResponse doFoundFile() throws IOException {
+		/*
+		 * {
+		 *   "id": "wqeqwe23",
+		 *	 "files":
+		 *   [
+		 *    {"ip":"11.22.33.66", "port":"5678", "name":"minufail1.txt"},
+		 *    {"ip":"11.22.33.68", "port":"5678", "name":"xxfail1yy.txt"}
+		 *   ]
+		 * }
+		 */
+		/*
+		 * Postituse saaja vastab eduka kättesaamise korral arvu 0,
+		 * arusaamatuste korral mõne muu (vea) numbri.
+		 */
+		String line = null;
+		boolean foundData = false;
+		String data = "";
+		while ((line = br.readLine()) != null) {
+			if (foundData) {
+				data += line + CRLF;
+			} else if (line.equals("")) {
+				foundData = true;
+			}
+		}
+
+		String answer = "0";
+		if (!data.isEmpty()) {
+			JsonObject json = null;
+			try {
+				json = JsonObject.readFrom(data);
+				//TODO: handle data
+			} catch (ParseException | 
+					UnsupportedOperationException e) {
+				answer = "1";
+			}
+		}
+
+		return new HTTPResponse200(
+				"text/plain", 
+				answer);
+	}
+
+	private static HTTPResponse doGetFile(Map<String, String> commandArgs) {
+		/*
+		 * fullname=fullfilename
+		 */
+		HTTPResponse resp = null;
+		if (commandArgs != null
+				&& commandArgs.containsKey("fullname")) {
+			String fileName = commandArgs.get("fullname");
+			if (fileName != null) {
+				try {
+					resp = new HTTPResponse200(
+							FileIOUtil.getFileContentType(fileName),
+							FileIOUtil.getFileBytes(fileName));
+					String[] fileNameParts = 
+							fileName.split("[/\\\\]");
+					String fileNameShort = 
+							fileNameParts[fileNameParts.length - 1];
+					fileNameShort = 
+							URLEncoder.encode(
+									fileNameShort, "UTF-8");
+					resp.setHeader(
+							"Content-Disposition",
+							"attachment; filename=\""
+									+ fileNameShort + "\"");
+				} catch (IOException | InvalidPathException e) { }
+			}
+		}
+		return resp;
+	}
+
+	private static HTTPResponse doSearchFile(Map<String, String> commandArgs)
+			throws IOException {
+		/*
+		 * name: otsitav string (peab olema failinimes)
+		 * sendip: esialgse otsija ip
+		 * sendport: esialgse otsija port
+		 * ttl: kui mitu otsingu-hopi veel teha 
+		 * 		(iga edasiküsimine vähendab ühe võrra)
+		 * id: optsionaalne päringu identifikaator
+		 * noask: optsionaalne list masinatest, kellelt 
+		 * 			pole mõtet küsida (eraldajaks alakriips) 
+		 */
+		String answer = "1";
+		if (commandArgs.containsKey("name") 
+				&& commandArgs.containsKey("sendip")
+				&& commandArgs.containsKey("sendport")
+				&& commandArgs.containsKey("ttl")) {
+			try {
+				String name = commandArgs.get("name");
+				InetAddress sendip = 
+						InetAddress.getByName(
+								commandArgs.get("sendip"));
+				int sendport = 
+						Integer.parseInt(
+								commandArgs.get("sendport"));
+				int ttl = 
+						Integer.parseInt(
+								commandArgs.get("ttl"));
+				if (!name.isEmpty()
+						&& sendport > 0 && sendport < 65535
+						&& ttl >= 0) {
+					if (ttl > 1) {
+						Iterator<Machine> iter = 
+								Wazaa.getMachinesIterator();
+						while (iter.hasNext()) {
+							Machine m = iter.next();
+							HTTPClient c = new HTTPClient(
+									m, "GET",
+									buildSearchFileCommand(
+											commandArgs));
+							c.start();
+						}
+					}
+					ArrayList<String> foundFiles = 
+							FileIOUtil.findFiles(name);
+					if (foundFiles != null && !foundFiles.isEmpty()) {
+						// only send foundfile is there are actually files found
+						Machine m = new Machine(sendip, sendport);
+						JsonObject json = buildFoundFileJson(foundFiles);
+						HTTPClient c = new HTTPClient(m, "POST",
+								json.toString());
+						c.start();
+					}
+					
+					answer = "0";
+				}
+			} catch (NumberFormatException
+					| UnknownHostException e) { }
+		}
+		return new HTTPResponse200("text/plain", answer);
+	}
 	
+	private static JsonObject buildFoundFileJson(ArrayList<String> foundFiles) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 	private static String buildSearchFileCommand(
 			Map<String, String> commandArgs) {
 		StringBuilder s = new StringBuilder("searchfile?");
