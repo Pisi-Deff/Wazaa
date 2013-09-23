@@ -10,6 +10,6 @@ public class HTTPResponse404 extends HTTPResponse {
 	}
 	
 	public static String createBody() {
-		return "1";
+		return "404";
 	}
 }
