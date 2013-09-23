@@ -13,6 +13,11 @@ public class Machine {
 		this.port = Integer.parseInt(port);
 	}
 	
+	public Machine(InetAddress ip, int port) {
+		this.ip = ip;
+		this.port = port;
+	}
+	
 	public InetAddress getIP() {
 		return ip;
 	}
