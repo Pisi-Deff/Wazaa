@@ -19,6 +19,7 @@ import wazaa.FileIOUtil;
 import wazaa.Machine;
 import wazaa.Wazaa;
 
+import com.eclipsesource.json.JsonArray;
 import com.eclipsesource.json.JsonObject;
 import com.eclipsesource.json.ParseException;
 
@@ -221,7 +222,8 @@ public class HTTPClientHandler extends Thread {
 					if (foundFiles != null && !foundFiles.isEmpty()) {
 						// only send foundfile is there are actually files found
 						Machine m = new Machine(sendip, sendport);
-						JsonObject json = buildFoundFileJson(foundFiles);
+						JsonObject json = 
+								buildFoundFileJson(foundFiles, commandArgs);
 						HTTPClient c = new HTTPClient(m, "POST",
 								json.toString());
 						c.start();
@@ -235,9 +237,31 @@ public class HTTPClientHandler extends Thread {
 		return new HTTPResponse200("text/plain", answer);
 	}
 	
-	private static JsonObject buildFoundFileJson(ArrayList<String> foundFiles) {
-		// TODO Auto-generated method stub
-		return null;
+	private static JsonObject buildFoundFileJson(
+			ArrayList<String> foundFiles, Map<String, String> commandArgs) {
+//		{ "id": "wqeqwe23",
+//			  "files":
+//			  [ 
+//			    {"ip":"11.22.33.66", "port":"5678", "name":"minufail1.txt"},
+//			    ...
+//			    {"ip":"11.22.33.68", "port":"5678", "name":"xxfail1yy.txt"}
+//			  ]
+//		}
+		JsonObject json = new JsonObject();
+		if (commandArgs.containsKey("id")) {
+			json.add("id", commandArgs.get("id"));
+		}
+		JsonArray files = new JsonArray();
+		
+		for (String fileName : foundFiles) {
+			JsonObject file = new JsonObject();
+			file.add("ip", "");
+			file.add("port", "");
+			file.add("name", fileName);
+		}
+		
+		json.add("files", files);
+		return json;
 	}
 
 	private static String buildSearchFileCommand(
