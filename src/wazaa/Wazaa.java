@@ -42,7 +42,7 @@ public class Wazaa {
 		prepareShareFolder(sharePath);
 		
 		getMachinesFromFile(MACHINESFILE);
-
+		
 		srv = new HTTPServer(port);
 		srv.start();
 	}
@@ -141,26 +141,46 @@ public class Wazaa {
 		Path sharePath = getShareFilePath("");
 		
 		if (search != null) {
-			DirectoryStream.Filter<Path> filter = new DirectoryStream.Filter<Path>() {
+			DirectoryStream.Filter<Path> filter = 
+					new DirectoryStream.Filter<Path>() {
 				@Override
 				public boolean accept(Path entry) throws IOException {
-					String actual = entry.getFileName().toString().toLowerCase();
+					String actual = 
+							entry.getFileName().toString().toLowerCase();
 					return actual.contains(search.toLowerCase()); //TODO search better
 				}
 			};
 			
-			try (DirectoryStream<Path> ds = Files.newDirectoryStream(sharePath, filter)) {
-				for (Path file : ds) {
-					System.out.println(file.getFileName());
-					//TODO: make arraylist(?) of the files with path relative to
-					// share folder
-				}
-			} catch (IOException e) {
-				System.out.println("Error reading share folder contents. " +
-						"(" + sharePath.toAbsolutePath().toString() + ")");
-			}
+			findFilesRecursivelyFromDirStream(
+					filter, foundFiles, sharePath,
+					sharePath);
 		}
 		return foundFiles;
+	}
+
+	public static void findFilesRecursivelyFromDirStream(
+			DirectoryStream.Filter<Path> filter, 
+			ArrayList<String> foundFiles, Path sharePath, Path shareFolder) {
+		try (DirectoryStream<Path> ds = Files.newDirectoryStream(
+				sharePath)) {
+			for (Path file : ds) {
+				if (Files.isDirectory(file)) {
+					findFilesRecursivelyFromDirStream(
+							filter, foundFiles, 
+							getShareFilePath(
+									file.getFileName().toString()),
+							shareFolder);
+				} else if (filter.accept(file)) {
+					String relativeFileName = 
+							shareFolder.relativize(file).toString();
+					foundFiles.add(relativeFileName);
+//					System.out.println(relativeFileName);
+				}
+			}
+		} catch (IOException e) {
+			System.out.println("Error reading share folder contents. " +
+					"(" + sharePath.toAbsolutePath().toString() + ")");
+		}
 	}
 	
 	public static String generateUniqueID() {
