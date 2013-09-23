@@ -14,6 +14,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.StringTokenizer;
 
+import wazaa.FileIOUtil;
 import wazaa.Machine;
 import wazaa.Wazaa;
 
@@ -128,8 +129,8 @@ public class HTTPClientHandler extends Thread {
 						if (fileName != null) {
 							try {
 								resp = new HTTPResponse200(
-										Wazaa.getFileContentType(fileName),
-										Wazaa.getFileBytes(fileName));
+										FileIOUtil.getFileContentType(fileName),
+										FileIOUtil.getFileBytes(fileName));
 								String[] fileNameParts = 
 										fileName.split("[/\\\\]");
 								String fileNameShort = 

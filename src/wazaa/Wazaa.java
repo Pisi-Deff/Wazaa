@@ -59,7 +59,7 @@ public class Wazaa {
 			}
 		}
 	}
-
+	
 	private static void prepareShareFolder(Path sharePath) {
 		if (!Files.isDirectory(sharePath)) {
 			try {
@@ -75,6 +75,11 @@ public class Wazaa {
 		}
 		System.out.println("Using share folder: "
 				+ sharePath.toAbsolutePath().toString());
+	}
+	
+	public static Path getShareFilePath(String fileName) 
+			throws InvalidPathException {
+		return FileSystems.getDefault().getPath(shareFolder + fileName);
 	}
 
 	private static void getMachinesFromFile(String fileName) {
@@ -119,68 +124,6 @@ public class Wazaa {
 	
 	public static Iterator<Machine> getMachinesIterator() {
 		return machines.iterator();
-	}
-	
-	public static Path getShareFilePath(String fileName) 
-			throws InvalidPathException {
-		return FileSystems.getDefault().getPath(shareFolder + fileName);
-	}
-	
-	public static byte[] getFileBytes(String fileName) 
-			throws IOException, InvalidPathException {
-		return Files.readAllBytes(getShareFilePath(fileName));
-	}
-	
-	public static String getFileContentType(String fileName)
-			throws InvalidPathException, IOException {
-		return Files.probeContentType(getShareFilePath(fileName));
-	}
-	
-	public static ArrayList<String> findFiles(final String search) {
-		ArrayList<String> foundFiles = new ArrayList<String>();
-		Path sharePath = getShareFilePath("");
-		
-		if (search != null) {
-			DirectoryStream.Filter<Path> filter = 
-					new DirectoryStream.Filter<Path>() {
-				@Override
-				public boolean accept(Path entry) throws IOException {
-					String actual = 
-							entry.getFileName().toString().toLowerCase();
-					return actual.contains(search.toLowerCase()); //TODO search better
-				}
-			};
-			
-			findFilesRecursivelyFromDirStream(
-					filter, foundFiles, sharePath,
-					sharePath);
-		}
-		return foundFiles;
-	}
-
-	public static void findFilesRecursivelyFromDirStream(
-			DirectoryStream.Filter<Path> filter, 
-			ArrayList<String> foundFiles, Path sharePath, Path shareFolder) {
-		try (DirectoryStream<Path> ds = Files.newDirectoryStream(
-				sharePath)) {
-			for (Path file : ds) {
-				if (Files.isDirectory(file)) {
-					findFilesRecursivelyFromDirStream(
-							filter, foundFiles, 
-							getShareFilePath(
-									file.getFileName().toString()),
-							shareFolder);
-				} else if (filter.accept(file)) {
-					String relativeFileName = 
-							shareFolder.relativize(file).toString();
-					foundFiles.add(relativeFileName);
-//					System.out.println(relativeFileName);
-				}
-			}
-		} catch (IOException e) {
-			System.out.println("Error reading share folder contents. " +
-					"(" + sharePath.toAbsolutePath().toString() + ")");
-		}
 	}
 	
 	public static String generateUniqueID() {
