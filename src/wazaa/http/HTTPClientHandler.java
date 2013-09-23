@@ -7,11 +7,14 @@ import java.io.OutputStream;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.net.URLEncoder;
+import java.net.UnknownHostException;
 import java.nio.file.InvalidPathException;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.StringTokenizer;
 
+import wazaa.Machine;
 import wazaa.Wazaa;
 
 import com.eclipsesource.json.JsonObject;
@@ -85,18 +88,34 @@ public class HTTPClientHandler extends Thread {
 						try {
 							String name = commandArgs.get("name");
 							InetAddress sendip = 
-									InetAddress.getByName(commandArgs.get("sendip"));
+									InetAddress.getByName(
+											commandArgs.get("sendip"));
 							int sendport = 
-									Integer.parseInt(commandArgs.get("sendport"));
+									Integer.parseInt(
+											commandArgs.get("sendport"));
 							int ttl = 
-									Integer.parseInt(commandArgs.get("ttl"));
+									Integer.parseInt(
+											commandArgs.get("ttl"));
 							if (!name.isEmpty()
 									&& sendport > 0 && sendport < 65535
 									&& ttl >= 0) {
+								if (ttl > 1) {
+									Iterator<Machine> iter = 
+											Wazaa.getMachinesIterator();
+									while (iter.hasNext()) {
+										Machine m = iter.next();
+										HTTPClient c = new HTTPClient(
+												m, "GET",
+												buildSearchFileCommand(
+														commandArgs));
+										c.run();
+									}
+								}
 								//TODO do search
-								//TODO send to all machines
+								answer = "0";
 							}
-						} catch (NumberFormatException e) { }
+						} catch (NumberFormatException
+								| UnknownHostException e) { }
 					}
 					resp = new HTTPResponse200("text/plain", answer);
 				} else if (command.startsWith("/getfile")) {
@@ -111,11 +130,13 @@ public class HTTPClientHandler extends Thread {
 								resp = new HTTPResponse200(
 										Wazaa.getFileContentType(fileName),
 										Wazaa.getFileBytes(fileName));
-								String[] fileNameParts = fileName.split("[/\\\\]");
+								String[] fileNameParts = 
+										fileName.split("[/\\\\]");
 								String fileNameShort = 
 										fileNameParts[fileNameParts.length - 1];
 								fileNameShort = 
-										URLEncoder.encode(fileNameShort, "UTF-8");
+										URLEncoder.encode(
+												fileNameShort, "UTF-8");
 								resp.setHeader(
 										"Content-Disposition",
 										"attachment; filename=\""
@@ -181,6 +202,13 @@ public class HTTPClientHandler extends Thread {
 		System.out.println("Connection to client closed: "
 				+ socket.getInetAddress().getHostAddress()
 				+ ":" + socket.getPort());
+	}
+	
+	private static String buildSearchFileCommand(
+			Map<String, String> commandArgs) {
+		StringBuilder s = new StringBuilder("searchfile?");
+		// TODO
+		return s.toString();
 	}
 
 	public static Map<String, String> getCommandArgsFromString(String s) {
