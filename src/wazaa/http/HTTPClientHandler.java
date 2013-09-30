@@ -206,10 +206,32 @@ public class HTTPClientHandler extends Thread {
 						&& sendport > 0 && sendport < 65535
 						&& ttl >= 0) {
 					if (ttl > 1) {
+						String[] noaskMachines = null;
+						if (commandArgs.containsKey("noask")
+							&& !commandArgs.get("noask").isEmpty()) {
+							noaskMachines = commandArgs.get("noask")
+									.split("_");
+						}
 						Iterator<Machine> iter = 
 								Wazaa.getMachinesIterator();
 						while (iter.hasNext()) {
 							Machine m = iter.next();
+							
+							if (noaskMachines != null) {
+								for (String s : noaskMachines) {
+									String[] noaskM = s.split(":");
+									if (noaskM.length == 2
+											&& noaskM[0].equals(
+													m.getIP().getHostAddress())
+											&& noaskM[1].equals(
+													String.valueOf(
+															m.getPort()))
+											) {
+										continue;
+									}
+								}
+							}
+							
 							HTTPClient c = new HTTPClient(
 									m, "GET",
 									buildSearchFileCommand(
@@ -217,7 +239,7 @@ public class HTTPClientHandler extends Thread {
 							c.start();
 						}
 					}
-					// TODO: handle optional searchfile args
+					// TODO: handle optional id arg
 					ArrayList<String> foundFiles = 
 							FileIOUtil.findFiles(name);
 					if (foundFiles != null && !foundFiles.isEmpty()) {
