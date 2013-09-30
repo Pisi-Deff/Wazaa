@@ -255,7 +255,7 @@ public class HTTPClientHandler extends Thread {
 		
 		for (String fileName : foundFiles) {
 			JsonObject file = new JsonObject();
-			file.add("ip", "");
+			file.add("ip", ""); // TODO
 			file.add("port", "");
 			file.add("name", fileName);
 		}
