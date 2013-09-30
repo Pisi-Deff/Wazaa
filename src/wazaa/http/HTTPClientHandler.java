@@ -224,7 +224,8 @@ public class HTTPClientHandler extends Thread {
 						Machine m = new Machine(sendip, sendport);
 						JsonObject json = 
 								buildFoundFileJson(foundFiles, commandArgs);
-						HTTPClient c = new HTTPClient(m, "POST",
+						HTTPClient c = new HTTPClient(
+								m, "POST", "foundfile",
 								json.toString());
 						c.start();
 					}
