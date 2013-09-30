@@ -14,11 +14,17 @@ public class WazaaJFXGUI extends Application {
 	@Override
 	public void start(final Stage stage) throws Exception {
 		StackPane root = new StackPane();
-		Scene scene = new Scene(root, 250, 500);
+		Scene scene = new Scene(root, 300, 400);
 		
 		stage.setTitle(Wazaa.WAZAANAME + " " + Wazaa.WAZAAVER);
 		stage.setScene(scene);
 		stage.show();
+	}
+	
+	@Override
+	public void stop() throws Exception {
+		super.stop();
+		System.exit(0);
 	}
 
 }
