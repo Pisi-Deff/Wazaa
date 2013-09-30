@@ -217,6 +217,7 @@ public class HTTPClientHandler extends Thread {
 							c.start();
 						}
 					}
+					// TODO: handle optional searchfile args
 					ArrayList<String> foundFiles = 
 							FileIOUtil.findFiles(name);
 					if (foundFiles != null && !foundFiles.isEmpty()) {
@@ -268,7 +269,20 @@ public class HTTPClientHandler extends Thread {
 	private static String buildSearchFileCommand(
 			Map<String, String> commandArgs) {
 		StringBuilder s = new StringBuilder("searchfile?");
-		// TODO
+		s.append("name=" + commandArgs.get("name")); 
+		s.append("&sendip=" + commandArgs.get("sendip"));
+		s.append("&sendport=" + commandArgs.get("sendport"));
+		Integer ttl = Integer.parseInt(commandArgs.get("ttl"));
+		s.append("&ttl=" + (ttl - 1));
+		if (commandArgs.containsKey("id")) {
+			s.append("&id=" + commandArgs.get("id"));
+		}
+		s.append("&noask=");
+		if (commandArgs.containsKey("noask") 
+				&& !commandArgs.get("noask").isEmpty()) {
+			s.append(commandArgs.get("noask") + "_");
+		}
+		s.append("127.0.0.1:12345"); // TODO: own ip and port
 		return s.toString();
 	}
 
