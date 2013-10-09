@@ -58,6 +58,8 @@ public class StartScreen implements Initializable {
 						Wazaa.setHTTPServer(new HTTPServer(port));
 						ScenesController root = (ScenesController) 
 								startButton.getScene().getRoot();
+						((MainScreen)root.getController("main"))
+							.setListeningStatusLabelText(portField.getText());
 						root.switchToScene("main");
 					}
 				} catch (NumberFormatException e) {
