@@ -30,8 +30,7 @@ public class Wazaa {
 	
 	public static final int DEFAULTPORT = 1215;
 	
-	public static final String MACHINESFILE = "machines.txt";
-	public static final String REMOTEMACHINESFILE = ""; // TODO
+	public static final String DEFAULTMACHINESFILE = "machines.txt";
 	
 	private static String shareFolder = "./wazaashare/";
 	
@@ -42,7 +41,7 @@ public class Wazaa {
 		Path sharePath = FileSystems.getDefault().getPath(shareFolder);
 		prepareShareFolder(sharePath);
 		
-		getMachinesFromFile(MACHINESFILE);
+		getMachinesFromFile(DEFAULTMACHINESFILE);
 		
 		gui.launchApp(args);
 	}
@@ -55,7 +54,8 @@ public class Wazaa {
 						+ sharePath.toAbsolutePath().toString());
 			} catch (IOException e) {
 				System.out.println(
-						"Share folder does not exist and failure creating it. " +
+						"Share folder does not exist "
+						+ "and failure creating it. " +
 						"(" + sharePath.toAbsolutePath().toString() + ")");
 				System.exit(1);
 			}
@@ -70,22 +70,33 @@ public class Wazaa {
 	}
 
 	private static void getMachinesFromFile(String fileName) {
+		BufferedReader in = null;
 		try {
-			BufferedReader in = new BufferedReader(new InputStreamReader(
+			in = new BufferedReader(new InputStreamReader(
 					new FileInputStream(fileName)));
-			parseMachinesFromJson(in);
+			String jsonString = "";
+			String line;
+			while ((line = in.readLine()) != null) {
+				jsonString += line;
+			}
+			parseMachinesFromJson(jsonString);
 		} catch (FileNotFoundException e) {
-			System.out.println("Local file of machines missing or inacessible. ("
-					+ MACHINESFILE + ")");
+			System.out.println("Local file of machines missing "
+					+ "or inacessible. ("
+					+ DEFAULTMACHINESFILE + ")");
 		} catch (IOException e) {
-			System.out.println("Invalid syntax in local machines file (" + MACHINESFILE
-					+ "). Skipping.");
+			System.out.println("Invalid syntax in local machines file ("
+					+ DEFAULTMACHINESFILE + "). Skipping.");
+		} finally {
+			try {
+				in.close();
+			} catch (Exception e) {}
 		}
 	}
 
-	private static void parseMachinesFromJson(BufferedReader in)
+	private static void parseMachinesFromJson(String jsonString)
 			throws IOException {
-		JsonArray jsonMachines = JsonArray.readFrom(in);
+		JsonArray jsonMachines = JsonArray.readFrom(jsonString);
 		for (JsonValue val : jsonMachines) {
 			JsonArray machineArr = val.asArray();
 			String IPStr = machineArr.get(0).asString();
