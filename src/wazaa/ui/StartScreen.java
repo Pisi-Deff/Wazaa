@@ -64,6 +64,7 @@ public class StartScreen implements Initializable {
 					}
 				} catch (NumberFormatException e) {
 					// Invalid port
+					portField.requestFocus();
 				}
 			}
 		});
