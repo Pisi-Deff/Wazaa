@@ -2,8 +2,6 @@ package wazaa.ui;
 
 import wazaa.Wazaa;
 import javafx.application.Application;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
@@ -15,14 +13,15 @@ public class WazaaJFXGUI extends Application {
 	@Override
 	public void start(final Stage stage) throws Exception {
 		try {
-		Parent root = FXMLLoader.load(
-						getClass().getResource("StartScreen.fxml"));
-		Scene scene = new Scene(root);
-		
-		stage.setTitle(Wazaa.WAZAANAME + " " + Wazaa.WAZAAVER);
-		stage.setScene(scene);
-		stage.sizeToScene();
-		stage.show();
+			ScenesController root = new ScenesController();
+			Scene scene = new Scene(root);
+			stage.setScene(scene);
+			stage.setTitle(Wazaa.WAZAANAME + " " + Wazaa.WAZAAVER);
+			
+			root.addSceneFromFXML("start", "StartScreen.fxml");
+			root.switchToScene("start");
+			
+			stage.show();
 		} catch (Exception e) {}
 	}
 	
