@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.paint.*?>
+<?import javafx.scene.text.*?>
+
+<VBox alignment="TOP_LEFT" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="400.0" prefWidth="600.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2" fx:controller="wazaa.ui.MainScreen">
+  <children>
+    <TabPane cache="true" cacheHint="DEFAULT" prefHeight="-1.0" prefWidth="-1.0" rotateGraphic="false" side="TOP" tabClosingPolicy="UNAVAILABLE" VBox.vgrow="ALWAYS">
+      <tabs>
+        <Tab closable="false" text="File search">
+          <content>
+            <HBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="-1.0" prefWidth="-1.0">
+              <children>
+                <ScrollPane fitToHeight="false" fitToWidth="false" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="false" prefHeight="-1.0" prefWidth="-1.0" HBox.hgrow="ALWAYS">
+                  <content>
+                    <TableView fx:id="fileSearchTable" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="-1.0" prefWidth="-1.0" tableMenuButtonVisible="false">
+                      <columns>
+                        <TableColumn editable="false" prefWidth="75.0" text="Filename" />
+                        <TableColumn editable="false" prefWidth="75.0" text="Column X" />
+                      </columns>
+                    </TableView>
+                  </content>
+                </ScrollPane>
+                <VBox maxHeight="1.7976931348623157E308" maxWidth="-Infinity" prefHeight="-1.0" prefWidth="160.0" HBox.hgrow="NEVER">
+                  <children>
+                    <Label text="Label" />
+                    <Separator prefWidth="200.0" />
+                    <Button mnemonicParsing="false" text="Button" />
+                    <Button mnemonicParsing="false" text="Button" />
+                  </children>
+                  <padding>
+                    <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                  </padding>
+                </VBox>
+              </children>
+            </HBox>
+          </content>
+        </Tab>
+        <Tab text="My shared files">
+          <content>
+            <ScrollPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="-1.0" prefWidth="-1.0">
+              <content>
+                <TableView fx:id="sharedFilesTable" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="-1.0" prefWidth="-1.0">
+                  <columns>
+                    <TableColumn prefWidth="75.0" text="Filename" />
+                    <TableColumn prefWidth="75.0" text="Column X" />
+                  </columns>
+                </TableView>
+              </content>
+            </ScrollPane>
+          </content>
+        </Tab>
+        <Tab text="Machines">
+          <content>
+            <VBox prefHeight="200.0" prefWidth="100.0">
+              <children>
+                <ListView fx:id="MachinesList" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="-1.0" prefWidth="-1.0" VBox.vgrow="ALWAYS" />
+                <HBox maxWidth="1.7976931348623157E308" prefHeight="25.0" prefWidth="-1.0" VBox.vgrow="NEVER">
+                  <children>
+                    <Button fx:id="addMachineButton" mnemonicParsing="false" text="Add machine" />
+                  </children>
+                  <padding>
+                    <Insets bottom="2.0" left="20.0" right="20.0" top="2.0" />
+                  </padding>
+                </HBox>
+              </children>
+            </VBox>
+          </content>
+        </Tab>
+      </tabs>
+    </TabPane>
+    <HBox maxHeight="25.0" maxWidth="1.7976931348623157E308" prefHeight="25.0" prefWidth="-1.0" VBox.vgrow="NEVER">
+      <children>
+        <Label text="StatusMsg" HBox.hgrow="NEVER">
+          <HBox.margin>
+            <Insets bottom="3.0" left="5.0" top="3.0" />
+          </HBox.margin>
+        </Label>
+        <Pane maxWidth="1.7976931348623157E308" prefHeight="-1.0" prefWidth="-1.0" HBox.hgrow="ALWAYS" />
+        <Label text="Label">
+          <HBox.margin>
+            <Insets bottom="3.0" right="5.0" top="3.0" />
+          </HBox.margin>
+        </Label>
+      </children>
+    </HBox>
+  </children>
+</VBox>
