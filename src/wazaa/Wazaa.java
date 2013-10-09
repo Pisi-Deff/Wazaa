@@ -17,7 +17,6 @@ import java.util.UUID;
 import com.eclipsesource.json.JsonArray;
 import com.eclipsesource.json.JsonValue;
 
-import wazaa.http.HTTPServer;
 import wazaa.ui.WazaaJFXGUI;
 
 public class Wazaa {
@@ -44,10 +43,7 @@ public class Wazaa {
 		
 		getMachinesFromFile(MACHINESFILE);
 		
-		new HTTPServer(port);
-		
-		gui.start(args);
-		// TODO launch srv via GUI
+		gui.launchApp(args);
 	}
 
 	private static void parseArgs(String[] args) {
