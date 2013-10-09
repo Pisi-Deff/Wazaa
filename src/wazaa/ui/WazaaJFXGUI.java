@@ -19,6 +19,7 @@ public class WazaaJFXGUI extends Application {
 			stage.setTitle(Wazaa.WAZAANAME + " " + Wazaa.WAZAAVER);
 			
 			root.addSceneFromFXML("start", "StartScreen.fxml");
+			root.addSceneFromFXML("main", "MainScreen.fxml");
 			root.switchToScene("start");
 			
 			stage.show();

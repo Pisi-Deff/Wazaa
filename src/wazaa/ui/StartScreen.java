@@ -57,7 +57,9 @@ public class StartScreen implements Initializable {
 							Integer.valueOf(portField.getText());
 					if (port <= 65535) {
 						new HTTPServer(port);
-						Stage stage = (Stage) startButton.getScene().getWindow();
+						ScenesController root = (ScenesController) 
+								startButton.getScene().getRoot();
+						root.switchToScene("main");
 					}
 				} catch (NumberFormatException e) {
 					// Invalid port
