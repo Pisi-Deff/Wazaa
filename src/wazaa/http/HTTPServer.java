@@ -41,4 +41,8 @@ public class HTTPServer extends Thread {
 			System.out.println("Perhaps something is already running on the port.");
 		}
 	}
+	
+	public int getPort() {
+		return this.port;
+	}
 }
