@@ -212,31 +212,33 @@ public class HTTPClientHandler extends Thread {
 							noaskMachines = commandArgs.get("noask")
 									.split("_");
 						}
-						Iterator<Machine> iter = 
-								Wazaa.getMachinesIterator();
-						while (iter.hasNext()) {
-							Machine m = iter.next();
-							
-							if (noaskMachines != null) {
-								for (String s : noaskMachines) {
-									String[] noaskM = s.split(":");
-									if (noaskM.length == 2
-											&& noaskM[0].equals(
-													m.getIP().getHostAddress())
-											&& noaskM[1].equals(
-													String.valueOf(
-															m.getPort()))
-											) {
-										continue;
+						synchronized (Wazaa.class) {
+							Iterator<Machine> iter = 
+									Wazaa.getMachines().iterator();
+							while (iter.hasNext()) {
+								Machine m = iter.next();
+								
+								if (noaskMachines != null) {
+									for (String s : noaskMachines) {
+										String[] noaskM = s.split(":");
+										if (noaskM.length == 2
+												&& noaskM[0].equals(
+														m.getIP().getHostAddress())
+												&& noaskM[1].equals(
+														String.valueOf(
+																m.getPort()))
+												) {
+											continue;
+										}
 									}
 								}
+								
+								HTTPClient c = new HTTPClient(
+										m, "GET",
+										buildSearchFileCommand(
+												commandArgs));
+								c.start();
 							}
-							
-							HTTPClient c = new HTTPClient(
-									m, "GET",
-									buildSearchFileCommand(
-											commandArgs));
-							c.start();
 						}
 					}
 					// TODO: handle optional id arg

@@ -11,7 +11,7 @@ import java.nio.file.Files;
 import java.nio.file.InvalidPathException;
 import java.nio.file.Path;
 import java.util.ArrayList;
-import java.util.Iterator;
+import java.util.List;
 import java.util.UUID;
 
 import com.eclipsesource.json.JsonArray;
@@ -34,7 +34,7 @@ public class Wazaa {
 	
 	private static String shareFolder = "./wazaashare/";
 	
-	private static ArrayList<Machine> machines = new ArrayList<Machine>();
+	private static List<Machine> machines = new ArrayList<Machine>();
 	
 	public static void main(String[] args) {
 		Path sharePath = FileSystems.getDefault().getPath(shareFolder);
@@ -108,8 +108,8 @@ public class Wazaa {
 		}
 	}
 	
-	public static Iterator<Machine> getMachinesIterator() {
-		return machines.iterator();
+	public static List<Machine> getMachines() {
+		return machines;
 	}
 	
 	public static String generateUniqueID() {
