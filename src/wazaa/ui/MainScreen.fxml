@@ -16,17 +16,13 @@
           <content>
             <HBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="-1.0" prefWidth="-1.0">
               <children>
-                <ScrollPane fitToHeight="false" fitToWidth="false" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="false" prefHeight="-1.0" prefWidth="-1.0" HBox.hgrow="ALWAYS">
-                  <content>
-                    <TableView fx:id="fileSearchTable" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="-1.0" prefWidth="-1.0" tableMenuButtonVisible="false">
-                      <columns>
-                        <TableColumn editable="false" prefWidth="75.0" text="Filename" />
-                        <TableColumn editable="false" prefWidth="75.0" text="Peer" />
-                        <TableColumn prefWidth="75.0" text="Column X" />
-                      </columns>
-                    </TableView>
-                  </content>
-                </ScrollPane>
+                <TableView fx:id="fileSearchTable" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="-1.0" prefWidth="-1.0" tableMenuButtonVisible="false" HBox.hgrow="ALWAYS">
+                  <columns>
+                    <TableColumn editable="false" prefWidth="75.0" text="Filename" />
+                    <TableColumn editable="false" prefWidth="75.0" text="Peer" />
+                    <TableColumn prefWidth="75.0" text="Column X" />
+                  </columns>
+                </TableView>
                 <VBox fillWidth="true" maxHeight="1.7976931348623157E308" maxWidth="-Infinity" minWidth="-Infinity" prefHeight="-1.0" prefWidth="150.0" spacing="5.0" HBox.hgrow="NEVER">
                   <children>
                     <Label text="No files selected" wrapText="true" />
@@ -44,27 +40,19 @@
         </Tab>
         <Tab text="My shared files">
           <content>
-            <ScrollPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="-1.0" prefWidth="-1.0">
-              <content>
-                <TableView fx:id="sharedFilesTable" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="-1.0" prefWidth="-1.0">
-                  <columns>
-                    <TableColumn prefWidth="75.0" text="Filename" />
-                    <TableColumn prefWidth="75.0" text="Column X" />
-                  </columns>
-                </TableView>
-              </content>
-            </ScrollPane>
+            <TableView fx:id="sharedFilesTable" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="-1.0" prefWidth="-1.0">
+              <columns>
+                <TableColumn prefWidth="75.0" text="Filename" />
+                <TableColumn prefWidth="75.0" text="Column X" />
+              </columns>
+            </TableView>
           </content>
         </Tab>
         <Tab text="Machines">
           <content>
             <HBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="-1.0" prefWidth="-1.0">
               <children>
-                <ScrollPane fitToWidth="false" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="-1.0" prefWidth="-1.0" HBox.hgrow="ALWAYS">
-                  <content>
-                    <ListView id="MachinesList" fx:id="machinesList" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="-1.0" prefWidth="-1.0" />
-                  </content>
-                </ScrollPane>
+                <ListView fx:id="machinesList" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" orientation="VERTICAL" prefHeight="-1.0" prefWidth="-1.0" HBox.hgrow="ALWAYS" />
                 <VBox minWidth="-Infinity" prefHeight="-1.0" prefWidth="150.0" spacing="5.0" HBox.hgrow="NEVER">
                   <children>
                     <Button fx:id="addMachineButton" mnemonicParsing="false" text="Add machine" />
