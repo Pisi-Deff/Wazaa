@@ -17,6 +17,7 @@ import java.util.UUID;
 import com.eclipsesource.json.JsonArray;
 import com.eclipsesource.json.JsonValue;
 
+import wazaa.http.HTTPServer;
 import wazaa.ui.WazaaJFXGUI;
 
 public class Wazaa {
@@ -24,9 +25,9 @@ public class Wazaa {
 	public static final String WAZAAVER = "0.1";
 	
 	private static WazaaJFXGUI gui = new WazaaJFXGUI();
+	private static HTTPServer httpServer;
 	
 	public static final int DEFAULTPORT = 1215;
-	private static int port = DEFAULTPORT;
 	
 	public static final String MACHINESFILE = "machines.txt";
 	public static final String REMOTEMACHINESFILE = ""; // TODO
@@ -36,27 +37,12 @@ public class Wazaa {
 	private static ArrayList<Machine> machines = new ArrayList<Machine>();
 	
 	public static void main(String[] args) {
-		parseArgs(args);
-		
 		Path sharePath = FileSystems.getDefault().getPath(shareFolder);
 		prepareShareFolder(sharePath);
 		
 		getMachinesFromFile(MACHINESFILE);
 		
 		gui.launchApp(args);
-	}
-
-	private static void parseArgs(String[] args) {
-		if (args.length > 0) {
-			try {
-				port = Integer.parseInt(args[0]);
-			} catch (NumberFormatException e) {
-				System.out.println("Invalid launch arguments.");
-				System.out.println("The first and only argument needs to be the port"
-						+ " that Wazaa will use.");
-				System.exit(1);
-			}
-		}
 	}
 	
 	private static void prepareShareFolder(Path sharePath) {
@@ -128,6 +114,14 @@ public class Wazaa {
 	
 	public static String generateUniqueID() {
 		return UUID.randomUUID().toString();
+	}
+
+	public static HTTPServer getHTTPServer() {
+		return httpServer;
+	}
+
+	public static void setHTTPServer(HTTPServer httpServer) {
+		Wazaa.httpServer = httpServer;
 	}
 
 }

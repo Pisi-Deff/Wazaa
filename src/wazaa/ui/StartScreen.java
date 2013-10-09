@@ -55,7 +55,7 @@ public class StartScreen implements Initializable {
 					Integer port = 
 							Integer.valueOf(portField.getText());
 					if (port <= 65535) {
-						new HTTPServer(port);
+						Wazaa.setHTTPServer(new HTTPServer(port));
 						ScenesController root = (ScenesController) 
 								startButton.getScene().getRoot();
 						root.switchToScene("main");
