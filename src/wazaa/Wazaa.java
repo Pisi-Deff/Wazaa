@@ -116,11 +116,11 @@ public class Wazaa {
 		return UUID.randomUUID().toString();
 	}
 
-	public static HTTPServer getHTTPServer() {
+	public synchronized static HTTPServer getHTTPServer() {
 		return httpServer;
 	}
 
-	public static void setHTTPServer(HTTPServer httpServer) {
+	public synchronized static void setHTTPServer(HTTPServer httpServer) {
 		Wazaa.httpServer = httpServer;
 	}
 
