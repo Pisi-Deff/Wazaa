@@ -11,6 +11,7 @@ import java.nio.file.Files;
 import java.nio.file.InvalidPathException;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
@@ -34,7 +35,8 @@ public class Wazaa {
 	
 	private static String shareFolder = "./wazaashare/";
 	
-	private static List<Machine> machines = new ArrayList<Machine>();
+	private static List<Machine> machines = 
+			Collections.synchronizedList(new ArrayList<Machine>());
 	
 	public static void main(String[] args) {
 		Path sharePath = FileSystems.getDefault().getPath(shareFolder);
