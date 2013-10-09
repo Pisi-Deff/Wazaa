@@ -20,6 +20,8 @@ public class HTTPClient extends Thread {
 	private String method;
 	private String postContent;
 	
+	private String response = null;
+	
 	private URL url;
 	
 	public HTTPClient(Machine machine, String method, String command)
@@ -39,11 +41,9 @@ public class HTTPClient extends Thread {
 			}
 		}
 		
-		this.url = new URL("http://" + machine.getIP().getHostAddress()
-				+ ":" + machine.getPort() + "/" + command);
+		this.url = new URL("http://" + machine.toString()
+				+ "/" + command);
 	}
-	
-	// TODO store response content and add method to retrieve it.
 	
 	@Override
 	public void run() {
@@ -64,15 +64,20 @@ public class HTTPClient extends Thread {
 			conn.connect();
 			BufferedReader in = new BufferedReader(
 					new InputStreamReader(conn.getInputStream()));
-			String line = in.readLine();
-			if (line == null) {
-				line = "";
+			String line;
+			response = "";
+			while ((line = in.readLine()) != null) { 
+				response += line;
 			}
 			System.out.println("HTTPClient made connection to <"
 					+ url.toString() + ">: "
 					+ " (" + conn.getResponseCode() + ") "
-					+ line);
+					+ response);
 			in.close();
 		} catch (IOException e) { }
+	}
+	
+	public String getResponse() {
+		return response;
 	}
 }
