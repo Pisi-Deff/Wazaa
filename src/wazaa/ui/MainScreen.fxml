@@ -21,15 +21,16 @@
                     <TableView fx:id="fileSearchTable" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="-1.0" prefWidth="-1.0" tableMenuButtonVisible="false">
                       <columns>
                         <TableColumn editable="false" prefWidth="75.0" text="Filename" />
-                        <TableColumn editable="false" prefWidth="75.0" text="Column X" />
+                        <TableColumn editable="false" prefWidth="75.0" text="Peer" />
+                        <TableColumn prefWidth="75.0" text="Column X" />
                       </columns>
                     </TableView>
                   </content>
                 </ScrollPane>
-                <VBox fillWidth="true" maxHeight="1.7976931348623157E308" maxWidth="-Infinity" minWidth="-Infinity" prefHeight="-1.0" prefWidth="100.0" HBox.hgrow="NEVER">
+                <VBox fillWidth="true" maxHeight="1.7976931348623157E308" maxWidth="-Infinity" minWidth="-Infinity" prefHeight="-1.0" prefWidth="150.0" spacing="5.0" HBox.hgrow="NEVER">
                   <children>
-                    <Label text="Label" />
-                    <Separator prefWidth="200.0" />
+                    <Label text="No files selected" wrapText="true" />
+                    <Separator prefWidth="-1.0" />
                     <Button mnemonicParsing="false" text="Button" />
                     <Button mnemonicParsing="false" text="Button" />
                   </children>
@@ -57,27 +58,27 @@
         </Tab>
         <Tab text="Machines">
           <content>
-            <VBox prefHeight="200.0" prefWidth="100.0">
+            <HBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="-1.0" prefWidth="-1.0">
               <children>
-                <ScrollPane fitToWidth="false" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="-1.0" prefWidth="-1.0" VBox.vgrow="ALWAYS">
+                <ScrollPane fitToWidth="false" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="-1.0" prefWidth="-1.0" HBox.hgrow="ALWAYS">
                   <content>
-                    <ListView fx:id="MachinesList" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="-1.0" prefWidth="-1.0" />
+                    <ListView id="MachinesList" fx:id="machinesList" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="-1.0" prefWidth="-1.0" />
                   </content>
                 </ScrollPane>
-                <HBox maxWidth="1.7976931348623157E308" prefHeight="25.0" prefWidth="-1.0" spacing="5.0" VBox.vgrow="NEVER">
+                <VBox minWidth="-Infinity" prefHeight="-1.0" prefWidth="150.0" spacing="5.0" HBox.hgrow="NEVER">
                   <children>
                     <Button fx:id="addMachineButton" mnemonicParsing="false" text="Add machine" />
-                    <Button id="addMachineFromFileButton" fx:id="addMachinesFromFileButton" mnemonicParsing="false" text="Add machines from file" />
-                    <Button fx:id="addMachinesFromURLButton" mnemonicParsing="false" text="Add machines from URL" />
-                    <Separator orientation="VERTICAL" prefHeight="200.0" />
-                    <Button fx:id="removeSelectedMachinesButton" mnemonicParsing="false" text="Remove selected" />
+                    <Button id="addMachineFromFileButton" fx:id="addMachinesFromFileButton" mnemonicParsing="false" text="Add from file" wrapText="false" />
+                    <Button fx:id="addMachinesFromURLButton" mnemonicParsing="false" text="Add from URL" wrapText="false" />
+                    <Separator prefWidth="-1.0" />
+                    <Button fx:id="removeSelectedMachinesButton" disable="true" mnemonicParsing="false" text="Remove selected" wrapText="false" />
                   </children>
                   <padding>
-                    <Insets bottom="2.0" left="20.0" right="20.0" top="2.0" />
+                    <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                   </padding>
-                </HBox>
+                </VBox>
               </children>
-            </VBox>
+            </HBox>
           </content>
         </Tab>
       </tabs>
