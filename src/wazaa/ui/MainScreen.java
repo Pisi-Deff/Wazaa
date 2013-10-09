@@ -1,13 +1,11 @@
 package wazaa.ui;
 
 import java.net.URL;
-import java.util.Iterator;
 import java.util.ResourceBundle;
 
 import wazaa.Machine;
 import wazaa.Wazaa;
 import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
