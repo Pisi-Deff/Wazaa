@@ -18,7 +18,7 @@
               <children>
                 <TableView fx:id="fileSearchTable" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="-1.0" prefWidth="-1.0" tableMenuButtonVisible="false" HBox.hgrow="ALWAYS">
                   <columns>
-                    <TableColumn editable="false" prefWidth="75.0" text="Filename" />
+                    <TableColumn editable="false" prefWidth="75.0" text="Name" />
                     <TableColumn editable="false" prefWidth="75.0" text="Peer" />
                     <TableColumn prefWidth="75.0" text="Column X" />
                   </columns>
@@ -45,8 +45,8 @@
               <children>
                 <TableView fx:id="sharedFilesTable" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="-1.0" prefWidth="-1.0" HBox.hgrow="ALWAYS">
                   <columns>
-                    <TableColumn prefWidth="75.0" text="Filename" />
-                    <TableColumn prefWidth="75.0" text="Column X" />
+                    <TableColumn prefWidth="75.0" text="Name" />
+                    <TableColumn prefWidth="75.0" text="Size" />
                   </columns>
                 </TableView>
                 <VBox fillWidth="true" maxHeight="1.7976931348623157E308" maxWidth="-Infinity" minWidth="-Infinity" prefHeight="-1.0" prefWidth="150.0" spacing="5.0" HBox.hgrow="NEVER">
