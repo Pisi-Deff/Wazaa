@@ -26,9 +26,10 @@
                 <VBox fillWidth="true" maxHeight="1.7976931348623157E308" maxWidth="-Infinity" minWidth="-Infinity" prefHeight="-1.0" prefWidth="150.0" spacing="5.0" HBox.hgrow="NEVER">
                   <children>
                     <Label text="No files selected" wrapText="true" />
+                    <Button mnemonicParsing="false" text="Button" />
                     <Separator prefWidth="-1.0" />
-                    <Button mnemonicParsing="false" text="Button" />
-                    <Button mnemonicParsing="false" text="Button" />
+                    <TextField maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefWidth="-1.0" />
+                    <Button fx:id="fileSearchButton" disable="true" mnemonicParsing="false" onAction="#fileSearchButtonAction" text="Search" />
                   </children>
                   <padding>
                     <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
@@ -40,12 +41,27 @@
         </Tab>
         <Tab text="My shared files">
           <content>
-            <TableView fx:id="sharedFilesTable" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="-1.0" prefWidth="-1.0">
-              <columns>
-                <TableColumn prefWidth="75.0" text="Filename" />
-                <TableColumn prefWidth="75.0" text="Column X" />
-              </columns>
-            </TableView>
+            <HBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="-1.0" prefWidth="-1.0">
+              <children>
+                <TableView fx:id="sharedFilesTable" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="-1.0" prefWidth="-1.0" HBox.hgrow="ALWAYS">
+                  <columns>
+                    <TableColumn prefWidth="75.0" text="Filename" />
+                    <TableColumn prefWidth="75.0" text="Column X" />
+                  </columns>
+                </TableView>
+                <VBox fillWidth="true" maxHeight="1.7976931348623157E308" maxWidth="-Infinity" minWidth="-Infinity" prefHeight="-1.0" prefWidth="150.0" spacing="5.0" HBox.hgrow="NEVER">
+                  <children>
+                    <Label text="No files selected" wrapText="true" />
+                    <Button mnemonicParsing="false" text="Button" />
+                    <Separator prefWidth="-1.0" />
+                    <Button fx:id="refreshMyFilesButton" mnemonicParsing="false" onAction="#refreshMyFilesButtonAction" text="Refresh" />
+                  </children>
+                  <padding>
+                    <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                  </padding>
+                </VBox>
+              </children>
+            </HBox>
           </content>
         </Tab>
         <Tab text="Machines">

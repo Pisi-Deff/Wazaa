@@ -20,16 +20,22 @@ import javafx.scene.control.TableView;
 
 public class MainScreen implements Initializable {
     @FXML
+    private Label listeningStatusLabel;
+    
+    @FXML
     private TableView<?> fileSearchTable;
+
+    @FXML
+    private Button fileSearchButton;
 
     @FXML
     private TableView<?> sharedFilesTable;
 
     @FXML
-    private ListView<Machine> machinesList;
-    
+    private Button refreshMyFilesButton;
+
     @FXML
-    private Label listeningStatusLabel;
+    private ListView<Machine> machinesList;
     
     @FXML
     private Button addMachineButton;
@@ -45,6 +51,7 @@ public class MainScreen implements Initializable {
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
+		
 		machinesList.getSelectionModel().
 			setSelectionMode(SelectionMode.MULTIPLE);
 		machinesList.setItems(
@@ -63,6 +70,16 @@ public class MainScreen implements Initializable {
 					}
 				});
 	}
+	
+    @FXML
+    private void fileSearchButtonAction(ActionEvent event) {
+    	
+    }
+
+    @FXML
+    private void refreshMyFilesButtonAction(ActionEvent event) {
+    	
+    }
 	
     @FXML
     private void addMachineButtonAction(ActionEvent event) {
