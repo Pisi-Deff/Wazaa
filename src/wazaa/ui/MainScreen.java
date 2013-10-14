@@ -1,5 +1,6 @@
 package wazaa.ui;
 
+import java.io.File;
 import java.net.URL;
 import java.util.ResourceBundle;
 
@@ -17,8 +18,16 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.SelectionMode;
 import javafx.scene.control.TableView;
+import javafx.stage.FileChooser;
+import javafx.stage.FileChooser.ExtensionFilter;
 
 public class MainScreen implements Initializable {
+	@FXML
+	private Label statusLabel;
+	
+	@FXML
+	private Label machinesStatusLabel;
+	
     @FXML
     private Label listeningStatusLabel;
     
@@ -42,7 +51,8 @@ public class MainScreen implements Initializable {
     
     @FXML
     private Button addMachinesFromFileButton;
-
+    private FileChooser fc = new FileChooser();
+    
     @FXML
     private Button addMachinesFromURLButton;
     
@@ -51,6 +61,9 @@ public class MainScreen implements Initializable {
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
+    	fc.setTitle("Open machines file");
+    	fc.getExtensionFilters().add(new ExtensionFilter(
+    			"JSON", "*.json", "*.txt"));
 		
 		machinesList.getSelectionModel().
 			setSelectionMode(SelectionMode.MULTIPLE);
@@ -69,6 +82,7 @@ public class MainScreen implements Initializable {
 						}
 					}
 				});
+		machinesStatusLabel.setText("");
 	}
 	
     @FXML
@@ -88,7 +102,13 @@ public class MainScreen implements Initializable {
 
     @FXML
     private void addMachinesFromFileButtonAction(ActionEvent event) {
-    	
+    	File file = fc.showOpenDialog(
+    			addMachinesFromFileButton.getScene().getWindow());
+    	if (file != null) {
+    		int count = Wazaa.getMachinesFromFile(file.getAbsolutePath());
+    		refreshMachinesList();
+    		machinesStatusLabel.setText("Added " + count + " machines.");
+    	}
     }
 
     @FXML
@@ -100,10 +120,14 @@ public class MainScreen implements Initializable {
     private void removeSelectedMachinesButtonAction(ActionEvent event) {
 		Wazaa.getMachines()
 			.removeAll(machinesList.getSelectionModel().getSelectedItems());
+		refreshMachinesList();
+    }
+
+	private void refreshMachinesList() {
 		ObservableList<Machine> list = machinesList.getItems();
 		machinesList.setItems(null);
 		machinesList.setItems(list);
-    }
+	}
 
 	public void setListeningStatusLabelText(String text) {
 		listeningStatusLabel.setText(text);
