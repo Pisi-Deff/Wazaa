@@ -4,8 +4,10 @@ import java.io.File;
 import java.net.URL;
 import java.util.ResourceBundle;
 
+import wazaa.FileIOUtil;
 import wazaa.Machine;
 import wazaa.Wazaa;
+import wazaa.WazaaFile;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
@@ -17,7 +19,9 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.SelectionMode;
+import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
 
@@ -38,10 +42,16 @@ public class MainScreen implements Initializable {
     private Button fileSearchButton;
 
     @FXML
-    private TableView<?> sharedFilesTable;
+    private TableView<WazaaFile> sharedFilesTable;
 
     @FXML
-    private Button refreshMyFilesButton;
+    private TableColumn<WazaaFile, String> sharedFilesFileNameCol;
+
+    @FXML
+    private TableColumn<WazaaFile, String> sharedFilesFileSizeCol;
+
+    @FXML
+    private Button refreshSharedFilesButton;
 
     @FXML
     private ListView<Machine> machinesList;
@@ -61,6 +71,11 @@ public class MainScreen implements Initializable {
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
+		// my files tab
+		sharedFilesFileNameCol.setCellValueFactory(
+				new PropertyValueFactory<WazaaFile, String>("fileName"));
+		refreshSharedFilesButtonAction(null);
+		// machines tab
     	fc.setTitle("Open machines file");
     	fc.getExtensionFilters().add(new ExtensionFilter(
     			"JSON", "*.json", "*.txt"));
@@ -91,8 +106,9 @@ public class MainScreen implements Initializable {
     }
 
     @FXML
-    private void refreshMyFilesButtonAction(ActionEvent event) {
-    	
+    private void refreshSharedFilesButtonAction(ActionEvent event) {
+    	sharedFilesTable.setItems(
+				FXCollections.observableList(FileIOUtil.findFiles("")));
     }
 	
     @FXML

@@ -45,8 +45,8 @@
               <children>
                 <TableView fx:id="sharedFilesTable" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="-1.0" prefWidth="-1.0" HBox.hgrow="ALWAYS">
                   <columns>
-                    <TableColumn prefWidth="75.0" text="Name" />
-                    <TableColumn prefWidth="75.0" text="Size" />
+                    <TableColumn prefWidth="75.0" text="Name" fx:id="sharedFilesFileNameCol" />
+                    <TableColumn prefWidth="75.0" text="Size" fx:id="sharedFilesFileSizeCol" />
                   </columns>
                 </TableView>
                 <VBox fillWidth="true" maxHeight="1.7976931348623157E308" maxWidth="-Infinity" minWidth="-Infinity" prefHeight="-1.0" prefWidth="150.0" spacing="5.0" HBox.hgrow="NEVER">
@@ -54,7 +54,7 @@
                     <Label text="No files selected" wrapText="true" />
                     <Button mnemonicParsing="false" text="Button" />
                     <Separator prefWidth="-1.0" />
-                    <Button fx:id="refreshMyFilesButton" mnemonicParsing="false" onAction="#refreshMyFilesButtonAction" text="Refresh" />
+                    <Button id="refreshMyFilesButton" fx:id="refreshSharedFilesButton" mnemonicParsing="false" onAction="#refreshSharedFilesButtonAction" text="Refresh" />
                   </children>
                   <padding>
                     <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
@@ -71,7 +71,7 @@
                 <ListView fx:id="machinesList" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" orientation="VERTICAL" prefHeight="-1.0" prefWidth="-1.0" HBox.hgrow="ALWAYS" />
                 <VBox minWidth="-Infinity" prefHeight="-1.0" prefWidth="150.0" spacing="5.0" HBox.hgrow="NEVER">
                   <children>
-                    <Label id="machinesStatus" fx:id="machinesStatusLabel" minHeight="50.0" prefHeight="50.0" text="machinesStatus" />
+                    <Label id="machinesStatus" fx:id="machinesStatusLabel" minHeight="16.0" prefHeight="-1.0" text="machinesStatus" />
                     <Separator prefWidth="-1.0" />
                     <Button fx:id="addMachineButton" mnemonicParsing="false" onAction="#addMachineButtonAction" text="Add machine" />
                     <Button id="addMachineFromFileButton" fx:id="addMachinesFromFileButton" mnemonicParsing="false" onAction="#addMachinesFromFileButtonAction" text="Add from file" wrapText="false" />
