@@ -69,8 +69,9 @@ public class Wazaa {
 		return FileSystems.getDefault().getPath(shareFolder + fileName);
 	}
 
-	private static void getMachinesFromFile(String fileName) {
+	public static int getMachinesFromFile(String fileName) {
 		BufferedReader in = null;
+		int count = 0;
 		try {
 			in = new BufferedReader(new InputStreamReader(
 					new FileInputStream(fileName)));
@@ -79,33 +80,38 @@ public class Wazaa {
 			while ((line = in.readLine()) != null) {
 				jsonString += line;
 			}
-			parseMachinesFromJson(jsonString);
+			count = parseMachinesFromJson(jsonString);
 		} catch (FileNotFoundException e) {
-			System.out.println("Local file of machines missing "
+			System.out.println("Machines file missing "
 					+ "or inacessible. ("
 					+ DEFAULTMACHINESFILE + ")");
 		} catch (IOException e) {
-			System.out.println("Invalid syntax in local machines file ("
+			System.out.println("Invalid syntax in machines file ("
 					+ DEFAULTMACHINESFILE + "). Skipping.");
 		} finally {
 			try {
 				in.close();
 			} catch (Exception e) {}
 		}
+		return count;
 	}
 
-	private static void parseMachinesFromJson(String jsonString)
+	public static int parseMachinesFromJson(String jsonString)
 			throws IOException {
+		int count = 0;
 		JsonArray jsonMachines = JsonArray.readFrom(jsonString);
 		for (JsonValue val : jsonMachines) {
 			JsonArray machineArr = val.asArray();
 			String IPStr = machineArr.get(0).asString();
 			String PortStr = machineArr.get(1).asString();
-			addMachine(IPStr, PortStr);
+			if (addMachine(IPStr, PortStr)) {
+				count++;
+			}
 		}
+		return count;
 	}
 
-	public static void addMachine(String IPStr, String PortStr) {
+	public static boolean addMachine(String IPStr, String PortStr) {
 		try {
 			Machine m = new Machine(IPStr, PortStr);
 			// TODO ignore own ip+port
@@ -114,11 +120,13 @@ public class Wazaa {
 				System.out.println("Added machine: "
 						+ m.getIP().getHostAddress() + ":"
 						+ m.getPort());
+				return true;
 			}
 		} catch (UnknownHostException | NumberFormatException e) {
 			System.out.println("Skipping invalid machine: " + IPStr
 					+ " - " + PortStr);
 		}
+		return false;
 	}
 	
 	public static List<Machine> getMachines() {
