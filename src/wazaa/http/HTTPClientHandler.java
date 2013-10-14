@@ -18,6 +18,7 @@ import java.util.StringTokenizer;
 import wazaa.FileIOUtil;
 import wazaa.Machine;
 import wazaa.Wazaa;
+import wazaa.WazaaFile;
 
 import com.eclipsesource.json.JsonArray;
 import com.eclipsesource.json.JsonObject;
@@ -242,7 +243,7 @@ public class HTTPClientHandler extends Thread {
 						}
 					}
 					// TODO: handle optional id arg
-					ArrayList<String> foundFiles = 
+					ArrayList<WazaaFile> foundFiles = 
 							FileIOUtil.findFiles(name);
 					if (foundFiles != null && !foundFiles.isEmpty()) {
 						// only send foundfile is there are actually files found
@@ -264,7 +265,7 @@ public class HTTPClientHandler extends Thread {
 	}
 	
 	private static JsonObject buildFoundFileJson(
-			ArrayList<String> foundFiles, Map<String, String> commandArgs) {
+			ArrayList<WazaaFile> foundFiles, Map<String, String> commandArgs) {
 //		{ "id": "wqeqwe23",
 //			  "files":
 //			  [ 
@@ -279,11 +280,11 @@ public class HTTPClientHandler extends Thread {
 		}
 		JsonArray files = new JsonArray();
 		
-		for (String fileName : foundFiles) {
+		for (WazaaFile wazaaFile : foundFiles) {
 			JsonObject file = new JsonObject();
 			file.add("ip", ""); // TODO
 			file.add("port", "");
-			file.add("name", fileName);
+			file.add("name", wazaaFile.getFileName());
 		}
 		
 		json.add("files", files);

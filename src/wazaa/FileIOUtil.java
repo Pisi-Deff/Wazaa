@@ -18,8 +18,8 @@ public class FileIOUtil {
 		return Files.probeContentType(Wazaa.getShareFilePath(fileName));
 	}
 	
-	public static ArrayList<String> findFiles(final String search) {
-		ArrayList<String> foundFiles = new ArrayList<String>();
+	public static ArrayList<WazaaFile> findFiles(final String search) {
+		ArrayList<WazaaFile> foundFiles = new ArrayList<WazaaFile>();
 		Path sharePath = Wazaa.getShareFilePath("");
 		
 		if (search != null) {
@@ -42,7 +42,8 @@ public class FileIOUtil {
 
 	public static void findFilesRecursivelyFromDirStream(
 			DirectoryStream.Filter<Path> filter, 
-			ArrayList<String> foundFiles, Path sharePath, Path shareFolder) {
+			ArrayList<WazaaFile> foundFiles, 
+			Path sharePath, Path shareFolder) {
 		try (DirectoryStream<Path> ds = Files.newDirectoryStream(
 				sharePath)) {
 			for (Path file : ds) {
@@ -55,7 +56,7 @@ public class FileIOUtil {
 				} else if (filter.accept(file)) {
 					String relativeFileName = 
 							shareFolder.relativize(file).toString();
-					foundFiles.add(relativeFileName);
+					foundFiles.add(new WazaaFile(relativeFileName));
 //					System.out.println(relativeFileName);
 				}
 			}
