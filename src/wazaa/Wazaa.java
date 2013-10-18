@@ -32,7 +32,7 @@ public class Wazaa {
 	
 	public static final String DEFAULTMACHINESFILE = "machines.txt";
 	
-	private static String shareFolder = "./wazaashare/";
+	private static String shareFolder = "wazaashare/";
 	
 	private static List<Machine> machines = 
 			Collections.synchronizedList(new ArrayList<Machine>());
