@@ -79,7 +79,7 @@ public class HTTPClientHandler extends Thread {
 					resp = doGetFile(commandArgs);
 				} else if (command.startsWith("/foundfile")
 						&& headerTok.equalsIgnoreCase("POST")) {
-					resp = doFoundFile();
+					resp = doFoundFile(br);
 				}
 				
 				if (resp == null) {
@@ -102,7 +102,8 @@ public class HTTPClientHandler extends Thread {
 				+ ":" + socket.getPort());
 	}
 
-	private HTTPResponse doFoundFile() throws IOException {
+	private static HTTPResponse doFoundFile(BufferedReader br)
+			throws IOException {
 		/*
 		 * {
 		 *   "id": "wqeqwe23",
@@ -236,7 +237,7 @@ public class HTTPClientHandler extends Thread {
 								
 								HTTPClient c = new HTTPClient(
 										m, "GET",
-										buildSearchFileCommand(
+										HTTPUtil.buildSearchFileCommand(
 												commandArgs));
 								c.start();
 							}
@@ -280,35 +281,19 @@ public class HTTPClientHandler extends Thread {
 		}
 		JsonArray files = new JsonArray();
 		
-		for (WazaaFile wazaaFile : foundFiles) {
-			JsonObject file = new JsonObject();
-			file.add("ip", ""); // TODO
-			file.add("port", "");
-			file.add("name", wazaaFile.getFileName());
-		}
+		try {
+			String myIP = InetAddress.getLocalHost().getHostAddress();
+			for (WazaaFile wazaaFile : foundFiles) {
+				JsonObject file = new JsonObject();
+				file.add("ip", myIP);
+				file.add("port", Wazaa.getHTTPServer().getPort());
+				file.add("name", wazaaFile.getFileName());
+				files.add(file);
+			}
+		} catch (UnknownHostException e) { }
 		
 		json.add("files", files);
 		return json;
-	}
-
-	private static String buildSearchFileCommand(
-			Map<String, String> commandArgs) {
-		StringBuilder s = new StringBuilder("searchfile?");
-		s.append("name=" + commandArgs.get("name")); 
-		s.append("&sendip=" + commandArgs.get("sendip"));
-		s.append("&sendport=" + commandArgs.get("sendport"));
-		Integer ttl = Integer.parseInt(commandArgs.get("ttl"));
-		s.append("&ttl=" + (ttl - 1));
-		if (commandArgs.containsKey("id")) {
-			s.append("&id=" + commandArgs.get("id"));
-		}
-		s.append("&noask=");
-		if (commandArgs.containsKey("noask") 
-				&& !commandArgs.get("noask").isEmpty()) {
-			s.append(commandArgs.get("noask") + "_");
-		}
-		s.append("127.0.0.1:12345"); // TODO: own ip and port
-		return s.toString();
 	}
 
 	public static Map<String, String> getCommandArgsFromString(String s) {
