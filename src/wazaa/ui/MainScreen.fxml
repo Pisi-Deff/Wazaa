@@ -18,17 +18,17 @@
               <children>
                 <TableView fx:id="fileSearchTable" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="-1.0" prefWidth="-1.0" tableMenuButtonVisible="false" HBox.hgrow="ALWAYS">
                   <columns>
-                    <TableColumn editable="false" prefWidth="75.0" text="Name" />
-                    <TableColumn editable="false" prefWidth="75.0" text="Peer" />
-                    <TableColumn prefWidth="75.0" text="Column X" />
+                    <TableColumn editable="false" prefWidth="75.0" text="Name" fx:id="fileSearchNameCol" />
+                    <TableColumn prefWidth="75.0" text="Size" fx:id="fileSearchSizeCol" />
+                    <TableColumn editable="false" prefWidth="75.0" text="Peer" fx:id="fileSearchPeerCol" />
                   </columns>
                 </TableView>
                 <VBox fillWidth="true" maxHeight="1.7976931348623157E308" maxWidth="-Infinity" minWidth="-Infinity" prefHeight="-1.0" prefWidth="150.0" spacing="5.0" HBox.hgrow="NEVER">
                   <children>
                     <Label text="No files selected" wrapText="true" />
-                    <Button mnemonicParsing="false" text="Button" />
+                    <Button fx:id="fileDownloadButton" disable="true" mnemonicParsing="false" onAction="#fileDownloadButtonAction" text="Download" />
                     <Separator prefWidth="-1.0" />
-                    <TextField maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefWidth="-1.0" />
+                    <TextField id="searchFileField" fx:id="fileSearchField" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefWidth="-1.0" promptText="Search" />
                     <Button fx:id="fileSearchButton" disable="true" mnemonicParsing="false" onAction="#fileSearchButtonAction" text="Search" />
                   </children>
                   <padding>
@@ -52,8 +52,8 @@
                 <VBox fillWidth="true" maxHeight="1.7976931348623157E308" maxWidth="-Infinity" minWidth="-Infinity" prefHeight="-1.0" prefWidth="150.0" spacing="5.0" HBox.hgrow="NEVER">
                   <children>
                     <Label text="No files selected" wrapText="true" />
-                    <Button mnemonicParsing="false" text="Button" />
                     <Separator prefWidth="-1.0" />
+                    <Button id="sharedFilesOpenInExplorerButton" fx:id="sharedFilesShowShareFolderButton" mnemonicParsing="false" onAction="#sharedFilesShowShareFolderButtonAction" text="Show folder" />
                     <Button id="refreshMyFilesButton" fx:id="refreshSharedFilesButton" mnemonicParsing="false" onAction="#refreshSharedFilesButtonAction" text="Refresh" />
                   </children>
                   <padding>
@@ -71,8 +71,6 @@
                 <ListView fx:id="machinesList" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" orientation="VERTICAL" prefHeight="-1.0" prefWidth="-1.0" HBox.hgrow="ALWAYS" />
                 <VBox minWidth="-Infinity" prefHeight="-1.0" prefWidth="150.0" spacing="5.0" HBox.hgrow="NEVER">
                   <children>
-                    <Label id="machinesStatus" fx:id="machinesStatusLabel" minHeight="16.0" prefHeight="-1.0" text="machinesStatus" />
-                    <Separator prefWidth="-1.0" />
                     <Button fx:id="addMachineButton" mnemonicParsing="false" onAction="#addMachineButtonAction" text="Add machine" />
                     <Button id="addMachineFromFileButton" fx:id="addMachinesFromFileButton" mnemonicParsing="false" onAction="#addMachinesFromFileButtonAction" text="Add from file" wrapText="false" />
                     <Button fx:id="addMachinesFromURLButton" mnemonicParsing="false" onAction="#addMachinesFromURLButtonAction" text="Add from URL" wrapText="false" />
