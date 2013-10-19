@@ -1,5 +1,6 @@
 package wazaa.ui;
 
+import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
 
@@ -11,9 +12,13 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.geometry.Insets;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.layout.VBox;
+import javafx.stage.Popup;
 
 public class StartScreen implements Initializable {
 	@FXML
@@ -55,16 +60,42 @@ public class StartScreen implements Initializable {
 					Integer port = 
 							Integer.valueOf(portField.getText());
 					if (port >= 0 && port <= 65535) {
-						Wazaa.setHTTPServer(new HTTPServer(port));
+						HTTPServer srv = new HTTPServer(port);
+						Wazaa.setHTTPServer(srv);
 						ScenesController root = (ScenesController) 
 								startButton.getScene().getRoot();
 						((MainScreen)root.getController("main"))
 							.setListeningStatusLabelText(portField.getText());
 						root.switchToScene("main");
+					} else {
+						portField.requestFocus();
 					}
 				} catch (NumberFormatException e) {
-					// Invalid port
 					portField.requestFocus();
+					Popup p = new Popup();
+					VBox box = new VBox();
+					Label l = new Label("Invalid port");
+					box.getChildren().add(l);
+		            box.setStyle("-fx-background-color: #FFD0A0;"
+		            		+ "-fx-border-color: #000000;"
+		            		+ "-fx-border-width: 1;");
+		            box.setPadding(new Insets(5));
+		            p.getContent().add(box);
+		            p.setAutoHide(true);
+		            p.show(portField.getScene().getWindow());
+				} catch (IOException e) {
+					portField.requestFocus();
+					Popup p = new Popup();
+					VBox box = new VBox();
+					Label l = new Label("Port already in use.");
+					box.getChildren().add(l);
+		            box.setStyle("-fx-background-color: #FFD0A0;"
+		            		+ "-fx-border-color: #000000;"
+		            		+ "-fx-border-width: 1;");
+		            box.setPadding(new Insets(5));
+		            p.getContent().add(box);
+		            p.setAutoHide(true);
+		            p.show(portField.getScene().getWindow());
 				}
 			}
 		});
