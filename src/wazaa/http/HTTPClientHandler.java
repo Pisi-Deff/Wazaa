@@ -19,9 +19,11 @@ import wazaa.FileIOUtil;
 import wazaa.Machine;
 import wazaa.Wazaa;
 import wazaa.WazaaFile;
+import wazaa.WazaaFoundFile;
 
 import com.eclipsesource.json.JsonArray;
 import com.eclipsesource.json.JsonObject;
+import com.eclipsesource.json.JsonValue;
 import com.eclipsesource.json.ParseException;
 
 public class HTTPClientHandler extends Thread {
@@ -131,12 +133,19 @@ public class HTTPClientHandler extends Thread {
 
 		String answer = "0";
 		if (!data.isEmpty()) {
-			JsonObject json = null;
 			try {
-				json = JsonObject.readFrom(data);
-				//TODO: handle data
+				JsonObject json = JsonObject.readFrom(data);
+				String id = json.get("id").asString();
+				JsonArray files = json.get("files").asArray();
+				for (JsonValue valFile : files) {
+					JsonObject file = valFile.asObject();
+					Wazaa.getFoundFiles().addFoundFile(id,
+							WazaaFoundFile.fromJson(file));
+				}
 			} catch (ParseException | 
-					UnsupportedOperationException e) {
+					UnsupportedOperationException |
+					UnknownHostException |
+					NumberFormatException e) {
 				answer = "1";
 			}
 		}
