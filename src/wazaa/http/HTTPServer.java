@@ -6,27 +6,33 @@ import java.net.Socket;
 
 public class HTTPServer extends Thread {
 	private int port;
+	private ServerSocket serverSocket;
 
-	public HTTPServer(int port) {
+	public HTTPServer(int port) throws IOException {
 		this.port = port;
+		try {
+			serverSocket = new ServerSocket(port);
+			System.out.println("HTTPServer running on port "
+					+ serverSocket.getLocalPort());
+		} catch (IOException e) {
+			System.out.println("Unable to launch server on port " + port + "!");
+			System.out.println("Perhaps something is already running on the port.");
+			throw new IOException();
+		}
+
 		start();
 	}
 
 	@Override
 	public void run() {
-		ServerSocket server_socket;
+		// server infinite loop
 		try {
-			server_socket = new ServerSocket(port);
-			System.out.println("HTTPServer running on port "
-					+ server_socket.getLocalPort());
-
-			// server infinite loop
 			while (true) {
-				Socket socket = server_socket.accept();
+				Socket socket = serverSocket.accept();
 				System.out.println("New connection accepted from: "
 						+ socket.getInetAddress().getHostAddress() 
 						+ ":" + socket.getPort());
-
+	
 				// Construct handler to process the HTTP request message.
 				// and start it
 				try {
@@ -37,8 +43,7 @@ public class HTTPServer extends Thread {
 				}
 			}
 		} catch (IOException e) {
-			System.out.println("Unable to launch server on port " + port + "!");
-			System.out.println("Perhaps something is already running on the port.");
+			System.out.println("Server error.");
 		}
 	}
 	
