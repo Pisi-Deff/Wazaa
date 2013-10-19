@@ -18,9 +18,9 @@
               <children>
                 <TableView fx:id="fileSearchTable" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="-1.0" prefWidth="-1.0" tableMenuButtonVisible="false" HBox.hgrow="ALWAYS">
                   <columns>
-                    <TableColumn editable="false" prefWidth="75.0" text="Name" fx:id="fileSearchNameCol" />
+                    <TableColumn editable="false" maxWidth="5000.0" minWidth="10.0" prefWidth="145.0" text="Name" fx:id="fileSearchNameCol" />
                     <TableColumn prefWidth="75.0" text="Size" fx:id="fileSearchSizeCol" />
-                    <TableColumn editable="false" prefWidth="75.0" text="Peer" fx:id="fileSearchPeerCol" />
+                    <TableColumn editable="false" maxWidth="5000.0" minWidth="10.0" prefWidth="117.0" text="Peer" fx:id="fileSearchPeerCol" />
                   </columns>
                 </TableView>
                 <VBox fillWidth="true" maxHeight="1.7976931348623157E308" maxWidth="-Infinity" minWidth="-Infinity" prefHeight="-1.0" prefWidth="150.0" spacing="5.0" HBox.hgrow="NEVER">
@@ -45,14 +45,12 @@
               <children>
                 <TableView fx:id="sharedFilesTable" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="-1.0" prefWidth="-1.0" HBox.hgrow="ALWAYS">
                   <columns>
-                    <TableColumn prefWidth="75.0" text="Name" fx:id="sharedFilesFileNameCol" />
+                    <TableColumn maxWidth="5000.0" minWidth="10.0" prefWidth="145.0" text="Name" fx:id="sharedFilesFileNameCol" />
                     <TableColumn prefWidth="75.0" text="Size" fx:id="sharedFilesFileSizeCol" />
                   </columns>
                 </TableView>
                 <VBox fillWidth="true" maxHeight="1.7976931348623157E308" maxWidth="-Infinity" minWidth="-Infinity" prefHeight="-1.0" prefWidth="150.0" spacing="5.0" HBox.hgrow="NEVER">
                   <children>
-                    <Label text="No files selected" wrapText="true" />
-                    <Separator prefWidth="-1.0" />
                     <Button id="sharedFilesOpenInExplorerButton" fx:id="sharedFilesShowShareFolderButton" mnemonicParsing="false" onAction="#sharedFilesShowShareFolderButtonAction" text="Show folder" />
                     <Button id="refreshMyFilesButton" fx:id="refreshSharedFilesButton" mnemonicParsing="false" onAction="#refreshSharedFilesButtonAction" text="Refresh" />
                   </children>
@@ -89,15 +87,9 @@
     </TabPane>
     <HBox maxHeight="25.0" maxWidth="1.7976931348623157E308" prefHeight="25.0" prefWidth="-1.0" VBox.vgrow="NEVER">
       <children>
-        <Label fx:id="statusLabel" text="Status" HBox.hgrow="NEVER">
-          <HBox.margin>
-            <Insets bottom="3.0" left="5.0" top="3.0" />
-          </HBox.margin>
-        </Label>
-        <Pane maxWidth="1.7976931348623157E308" prefHeight="-1.0" prefWidth="-1.0" HBox.hgrow="ALWAYS" />
         <Label id="listeningStatus" text="Listening on:">
           <HBox.margin>
-            <Insets bottom="3.0" right="5.0" top="3.0" />
+            <Insets bottom="3.0" left="5.0" right="5.0" top="3.0" />
           </HBox.margin>
         </Label>
         <Label id="listeningStatus" fx:id="listeningStatusLabel" text="xxxx">
@@ -105,6 +97,7 @@
             <Insets bottom="3.0" right="5.0" top="3.0" />
           </HBox.margin>
         </Label>
+        <Pane maxWidth="1.7976931348623157E308" prefHeight="-1.0" prefWidth="-1.0" HBox.hgrow="ALWAYS" />
       </children>
     </HBox>
   </children>

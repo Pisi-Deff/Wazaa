@@ -11,7 +11,6 @@ import java.net.UnknownHostException;
 import java.nio.file.InvalidPathException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.StringTokenizer;
 
@@ -67,6 +66,9 @@ public class HTTPClientHandler extends Thread {
 					|| headerTok.equalsIgnoreCase("POST")) {
 				String commandBits[] = s.nextToken().split("\\?");
 				String command = commandBits[0];
+				System.out.println("Request from <" + 
+						socket.getInetAddress().getHostAddress() +
+						":" + socket.getPort() + ">: " + headerLine);
 				
 				Map<String, String> commandArgs = null;
 				if (commandBits.length > 1) {
@@ -81,7 +83,7 @@ public class HTTPClientHandler extends Thread {
 					resp = doGetFile(commandArgs);
 				} else if (command.startsWith("/foundfile")
 						&& headerTok.equalsIgnoreCase("POST")) {
-					resp = doFoundFile(br);
+					resp = doFoundFile(socket, br);
 				}
 				
 				if (resp == null) {
@@ -104,7 +106,7 @@ public class HTTPClientHandler extends Thread {
 				+ ":" + socket.getPort());
 	}
 
-	private static HTTPResponse doFoundFile(BufferedReader br)
+	private static HTTPResponse doFoundFile(Socket sock, BufferedReader br)
 			throws IOException {
 		/*
 		 * {
@@ -120,18 +122,37 @@ public class HTTPClientHandler extends Thread {
 		 * Postituse saaja vastab eduka kättesaamise korral arvu 0,
 		 * arusaamatuste korral mõne muu (vea) numbri.
 		 */
+		String answer = "0";
 		String line = null;
-		boolean foundData = false;
 		String data = "";
-		while ((line = br.readLine()) != null) {
-			if (foundData) {
-				data += line + CRLF;
+		int contentLength = 0;
+		while (true) {
+			line = br.readLine();
+			if (line == null) {
+				break;
 			} else if (line.equals("")) {
-				foundData = true;
+				break;
+			} else if (line.startsWith("Content-Length: ")) {
+				line = line.replaceFirst(
+						"Content-Length:", "");
+				try {
+					contentLength = Integer.parseInt(line.trim());
+				} catch (NumberFormatException e) { }
 			}
 		}
-
-		String answer = "0";
+		
+		if (contentLength == 0) {
+			answer = "1";
+		}
+		
+		for (int i = 0; i < contentLength; i++) {
+			char c = (char) br.read();
+			if (c == -1) {
+				break;
+			}
+			data += c;
+		}
+		
 		if (!data.isEmpty()) {
 			try {
 				JsonObject json = JsonObject.readFrom(data);
@@ -141,6 +162,7 @@ public class HTTPClientHandler extends Thread {
 					JsonObject file = valFile.asObject();
 					Wazaa.getFoundFiles().addFoundFile(id,
 							WazaaFoundFile.fromJson(file));
+					Wazaa.getGUI().refreshFoundFiles();
 				}
 			} catch (ParseException | 
 					UnsupportedOperationException |
@@ -217,42 +239,8 @@ public class HTTPClientHandler extends Thread {
 						&& sendport > 0 && sendport < 65535
 						&& ttl >= 0) {
 					if (ttl > 1) {
-						String[] noaskMachines = null;
-						if (commandArgs.containsKey("noask")
-							&& !commandArgs.get("noask").isEmpty()) {
-							noaskMachines = commandArgs.get("noask")
-									.split("_");
-						}
-						synchronized (Wazaa.class) {
-							Iterator<Machine> iter = 
-									Wazaa.getMachines().iterator();
-							while (iter.hasNext()) {
-								Machine m = iter.next();
-								
-								if (noaskMachines != null) {
-									for (String s : noaskMachines) {
-										String[] noaskM = s.split(":");
-										if (noaskM.length == 2
-												&& noaskM[0].equals(
-														m.getIP().getHostAddress())
-												&& noaskM[1].equals(
-														String.valueOf(
-																m.getPort()))
-												) {
-											continue;
-										}
-									}
-								}
-								
-								HTTPClient c = new HTTPClient(
-										m, "GET",
-										HTTPUtil.buildSearchFileCommand(
-												commandArgs));
-								c.start();
-							}
-						}
+						HTTPUtil.sendSearchFileReqs(commandArgs);
 					}
-					// TODO: handle optional id arg
 					ArrayList<WazaaFile> foundFiles = 
 							FileIOUtil.findFiles(name);
 					if (foundFiles != null && !foundFiles.isEmpty()) {
@@ -260,10 +248,9 @@ public class HTTPClientHandler extends Thread {
 						Machine m = new Machine(sendip, sendport);
 						JsonObject json = 
 								buildFoundFileJson(foundFiles, commandArgs);
-						HTTPClient c = new HTTPClient(
+						new HTTPClient(
 								m, "POST", "foundfile",
 								json.toString());
-						c.start();
 					}
 					
 					answer = "0";
@@ -295,7 +282,8 @@ public class HTTPClientHandler extends Thread {
 			for (WazaaFile wazaaFile : foundFiles) {
 				JsonObject file = new JsonObject();
 				file.add("ip", myIP);
-				file.add("port", Wazaa.getHTTPServer().getPort());
+				file.add("port", String.valueOf(
+						Wazaa.getHTTPServer().getPort()));
 				file.add("name", wazaaFile.getFileName());
 				files.add(file);
 			}

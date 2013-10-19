@@ -5,12 +5,14 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.nio.file.InvalidPathException;
+import java.util.List;
 import java.util.ResourceBundle;
 
 import wazaa.FileIOUtil;
 import wazaa.Machine;
 import wazaa.Wazaa;
 import wazaa.WazaaFile;
+import wazaa.WazaaFoundFile;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
@@ -27,7 +29,6 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
@@ -44,13 +45,23 @@ public class MainScreen implements Initializable {
     private Button fileDownloadButton;
     
     @FXML
-    private TableView<?> fileSearchTable;
+    private TableView<WazaaFoundFile> fileSearchTable;
+
+    @FXML
+    private TableColumn<WazaaFoundFile, String> fileSearchNameCol;
+
+    @FXML
+    private TableColumn<WazaaFoundFile, String> fileSearchPeerCol;
+
+    @FXML
+    private TableColumn<WazaaFoundFile, String> fileSearchSizeCol;
     
     @FXML
     private TextField fileSearchField;
 
     @FXML
     private Button fileSearchButton;
+    private String latestSearchUUID;
 
     @FXML
     private TableView<WazaaFile> sharedFilesTable;
@@ -86,6 +97,10 @@ public class MainScreen implements Initializable {
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
 		// file search tab
+		fileSearchNameCol.setCellValueFactory(
+				new PropertyValueFactory<WazaaFoundFile, String>("fileName"));
+		fileSearchPeerCol.setCellValueFactory(
+				new PropertyValueFactory<WazaaFoundFile, String>("machine"));
 		// my files tab
 		sharedFilesFileNameCol.setCellValueFactory(
 				new PropertyValueFactory<WazaaFile, String>("fileName"));
@@ -134,7 +149,11 @@ public class MainScreen implements Initializable {
 	
     @FXML
     private void fileSearchButtonAction(ActionEvent event) {
-    	
+    	if (!fileSearchField.getText().isEmpty()) {
+    		latestSearchUUID = 
+    				Wazaa.searchForFile(fileSearchField.getText());
+    		refreshFoundFiles();
+    	}
     }
 
     @FXML
@@ -193,12 +212,26 @@ public class MainScreen implements Initializable {
 		refreshMachinesList();
     }
 
-	private void refreshMachinesList() {
+	public void refreshFoundFiles() {
+		fileSearchTable.setItems(null);
+		if (latestSearchUUID != null) {
+			List<WazaaFoundFile> files = 
+					Wazaa.getFoundFiles().getFilesList(
+					latestSearchUUID);
+			if (files != null) {
+				fileSearchTable.setItems(
+						FXCollections.observableArrayList(
+								files));
+			}
+		}
+	}
+
+	public void refreshMachinesList() {
 		ObservableList<Machine> list = machinesList.getItems();
 		machinesList.setItems(null);
 		machinesList.setItems(list);
 	}
-
+	
 	public void setListeningStatusLabelText(String text) {
 		listeningStatusLabel.setText(text);
 	}

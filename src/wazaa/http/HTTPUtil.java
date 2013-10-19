@@ -1,9 +1,11 @@
 package wazaa.http;
 
+import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.Map;
 
+import wazaa.Machine;
 import wazaa.Wazaa;
 
 public class HTTPUtil {
@@ -39,5 +41,45 @@ public class HTTPUtil {
 			s.append(myMachine);
 		}
 		return s.toString();
+	}
+
+	public static void sendSearchFileReqs(Map<String, String> commandArgs)
+			throws UnknownHostException {
+		String command = buildSearchFileCommand(commandArgs);
+		String[] noaskMachines = null;
+		if (commandArgs.containsKey("noask")
+			&& !commandArgs.get("noask").isEmpty()) {
+			noaskMachines = commandArgs.get("noask")
+					.split("_");
+		}
+		for (Machine m : Wazaa.getMachines()) {
+			if (m.getIP().getHostAddress().equals(
+					InetAddress.
+					getLocalHost().getHostAddress()) &&
+				m.getPort() == 
+				Wazaa.getHTTPServer().getPort()) {
+				continue;
+			} else if (noaskMachines != null) {
+				boolean isNoAsk = false;
+				for (String s : noaskMachines) {
+					String[] noaskM = s.split(":");
+					if (noaskM.length == 2
+							&& noaskM[0].equals(
+									m.getIP().getHostAddress())
+							&& noaskM[1].equals(
+									String.valueOf(
+											m.getPort()))
+							) {
+						isNoAsk = true;
+					}
+				}
+				if (isNoAsk) {
+					continue;
+				}
+			}
+			try {
+				new HTTPClient(m, "GET", command);
+			} catch (IOException e) { }
+		}
 	}
 }

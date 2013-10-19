@@ -47,28 +47,42 @@ public class HTTPClient extends Thread {
 		
 		this.url = new URL("http://" + machine.toString()
 				+ "/" + command);
+		
+		this.setName("HTTPClientThread");
+		start();
 	}
 	
 	@Override
 	public void run() {
 		try {
+			System.out.println("HTTPClient attempting connection to <"
+					+ url.toString() + ">");
 			HttpURLConnection conn = 
 					(HttpURLConnection) url.openConnection();
+			conn.setReadTimeout(15000);
 			conn.setRequestMethod(method);
 			conn.setRequestProperty("User-Agent", 
 					Wazaa.WAZAANAME + " v" + Wazaa.WAZAAVER);
+			
 			if (method.equals("POST") && postContent != null) {
 				conn.setDoOutput(true);
 				conn.setRequestProperty("Content-Type", "application/json");
 				BufferedWriter out = new BufferedWriter(
 						new OutputStreamWriter(conn.getOutputStream()));
 				out.write(postContent);
+				out.flush();
 				out.close();
+				conn.getOutputStream().close();
 			}
+			
 			conn.connect();
 			
+			System.out.println("HTTPClient made connection to <"
+					+ url.toString() + ">: "
+					+ conn.getResponseCode());
+			
 			String disposition = conn.getHeaderField("Content-Disposition");
-
+			
 			if (disposition != null) {
 				// extracts file name from header field
 				int index = disposition.indexOf("filename=");
@@ -86,10 +100,6 @@ public class HTTPClient extends Thread {
 						latter + 1,
 						url.toString().length());
 			}
-			
-			System.out.println("HTTPClient made connection to <"
-					+ url.toString() + ">: "
-					+ conn.getResponseCode());
 			
 			if (responseFileName != null) {
 				ByteArrayOutputStream byteStream = 
@@ -114,7 +124,7 @@ public class HTTPClient extends Thread {
 				System.out.println("Response: " + response);
 			}
 		} catch (IOException e) {
-			System.out.println("HTTPClient failed to make connection to <"
+			System.out.println("HTTPClient failed connection to <"
 					+ url.toString() + ">");
 		}
 	}

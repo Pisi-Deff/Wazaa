@@ -20,10 +20,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import javafx.application.Application;
+
 import com.eclipsesource.json.JsonArray;
 import com.eclipsesource.json.JsonValue;
 
-import wazaa.http.HTTPClient;
 import wazaa.http.HTTPServer;
 import wazaa.http.HTTPUtil;
 import wazaa.ui.WazaaJFXGUI;
@@ -32,8 +33,8 @@ public class Wazaa {
 	public static final String WAZAANAME = "Wazaa";
 	public static final String WAZAAVER = "0.1";
 	
-	private static WazaaJFXGUI gui = new WazaaJFXGUI();
-	private static FoundFiles foundFiles = new FoundFiles(gui);
+	private static WazaaJFXGUI gui;
+	private static FoundFiles foundFiles = new FoundFiles();
 	private static HTTPServer httpServer;
 	
 	public static final int DEFAULTPORT = 1215;
@@ -52,7 +53,7 @@ public class Wazaa {
 		
 		getMachinesFromFile(DEFAULTMACHINESFILE);
 		
-		gui.launchApp(args);
+		Application.launch(WazaaJFXGUI.class, args);
 	}
 	
 	private static void prepareShareFolder(Path sharePath) {
@@ -150,26 +151,29 @@ public class Wazaa {
 					InetAddress.getLocalHost().getHostAddress());
 			commandArgs.put("sendport", 
 					String.valueOf(Wazaa.getHTTPServer().getPort()));
-			commandArgs.put("ttl", String.valueOf(Wazaa.DEFAULTTTL));
+			commandArgs.put("ttl", String.valueOf(Wazaa.DEFAULTTTL + 1));
 			commandArgs.put("id", uuid);
-			for (Machine m : Wazaa.getMachines()) {
-				try {
-					new HTTPClient(m, "GET", 
-							HTTPUtil.buildSearchFileCommand(commandArgs));
-				} catch (IOException e) { }
-			}
+			HTTPUtil.sendSearchFileReqs(commandArgs);
 			return uuid;
 		} catch (UnsupportedEncodingException | 
 				UnknownHostException e) { }
 		return null;
 	}
-	
+
 	public static List<Machine> getMachines() {
 		return machines;
 	}
 	
 	public static String generateUniqueID() {
 		return UUID.randomUUID().toString();
+	}
+	
+	public static void setGUI(WazaaJFXGUI gui) {
+		Wazaa.gui = gui;
+	}
+	
+	public static WazaaJFXGUI getGUI() {
+		return gui;
 	}
 	
 	public static FoundFiles getFoundFiles() {

@@ -6,14 +6,13 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 
 public class WazaaJFXGUI extends Application {
-	public void launchApp(String[] args) {
-		Application.launch(args);
-	}
-
+	private ScenesController root;
+	
 	@Override
 	public void start(final Stage stage) throws Exception {
 		try {
-			ScenesController root = new ScenesController();
+			Wazaa.setGUI(this);
+			root = new ScenesController();
 			Scene scene = new Scene(root);
 			stage.setScene(scene);
 			stage.setTitle(Wazaa.WAZAANAME + " " + Wazaa.WAZAAVER);
@@ -33,4 +32,7 @@ public class WazaaJFXGUI extends Application {
 		System.exit(0);
 	}
 
+	public synchronized void refreshFoundFiles() {
+		((MainScreen)root.getController("main")).refreshFoundFiles();
+	}
 }

@@ -38,9 +38,7 @@ public class HTTPServer extends Thread {
 				try {
 					HTTPClientHandler request = new HTTPClientHandler(socket);
 					request.start();
-				} catch (IOException e) {
-					System.out.println(e);
-				}
+				} catch (IOException e) { }
 			}
 		} catch (IOException e) {
 			System.out.println("Server error.");
