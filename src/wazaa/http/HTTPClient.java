@@ -2,7 +2,9 @@ package wazaa.http;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
@@ -20,7 +22,9 @@ public class HTTPClient extends Thread {
 	private String method;
 	private String postContent;
 	
-	private String response = null;
+	private String response;
+	private String responseFileName;
+	private byte[] responseFileBytes;
 	
 	private URL url;
 	
@@ -62,22 +66,68 @@ public class HTTPClient extends Thread {
 				out.close();
 			}
 			conn.connect();
-			BufferedReader in = new BufferedReader(
-					new InputStreamReader(conn.getInputStream()));
-			String line;
-			response = "";
-			while ((line = in.readLine()) != null) { 
-				response += line;
+			
+			String disposition = conn.getHeaderField("Content-Disposition");
+
+			if (disposition != null) {
+				// extracts file name from header field
+				int index = disposition.indexOf("filename=");
+				if (index > 0) {
+					responseFileName = disposition.substring(index + 10,
+							disposition.length() - 1);
+				}
+			} else if (url.toString().matches("/getfile\\?")) {
+				// extracts file name from URL
+				int lastSlash = url.toString().lastIndexOf("/");
+				int lastEquals = url.toString().lastIndexOf("=");
+				int latter = 
+						(lastSlash < lastEquals ? lastEquals : lastSlash);
+				responseFileName = url.toString().substring(
+						latter + 1,
+						url.toString().length());
 			}
+			
 			System.out.println("HTTPClient made connection to <"
 					+ url.toString() + ">: "
-					+ " (" + conn.getResponseCode() + ") "
-					+ response);
-			in.close();
-		} catch (IOException e) { }
+					+ conn.getResponseCode());
+			
+			if (responseFileName != null) {
+				ByteArrayOutputStream byteStream = 
+						new ByteArrayOutputStream();
+				InputStream in = conn.getInputStream();
+				int bytesRead = -1;
+				byte[] buffer = new byte[1024];
+				while ((bytesRead = in.read(buffer)) != -1) {
+					byteStream.write(buffer, 0, bytesRead);
+				}
+				responseFileBytes = byteStream.toByteArray();
+				System.out.println("Received file: " + responseFileName);
+			} else {
+				BufferedReader in = new BufferedReader(
+						new InputStreamReader(conn.getInputStream()));
+				response = "";
+				String line;
+				while ((line = in.readLine()) != null) { 
+					response += line;
+				}
+				in.close();
+				System.out.println("Response: " + response);
+			}
+		} catch (IOException e) {
+			System.out.println("HTTPClient failed to make connection to <"
+					+ url.toString() + ">");
+		}
 	}
 	
 	public String getResponse() {
 		return response;
+	}
+	
+	public String getResponseFileName() {
+		return responseFileName;
+	}
+	
+	public byte[] getResponseFileBytes() {
+		return responseFileBytes;
 	}
 }
