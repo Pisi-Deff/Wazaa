@@ -5,6 +5,9 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
+import java.net.InetAddress;
+import java.net.URLEncoder;
 import java.net.UnknownHostException;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
@@ -12,13 +15,17 @@ import java.nio.file.InvalidPathException;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 import com.eclipsesource.json.JsonArray;
 import com.eclipsesource.json.JsonValue;
 
+import wazaa.http.HTTPClient;
 import wazaa.http.HTTPServer;
+import wazaa.http.HTTPUtil;
 import wazaa.ui.WazaaJFXGUI;
 
 public class Wazaa {
@@ -26,11 +33,13 @@ public class Wazaa {
 	public static final String WAZAAVER = "0.1";
 	
 	private static WazaaJFXGUI gui = new WazaaJFXGUI();
+	private static FoundFiles foundFiles = new FoundFiles(gui);
 	private static HTTPServer httpServer;
 	
 	public static final int DEFAULTPORT = 1215;
 	
 	public static final String DEFAULTMACHINESFILE = "machines.txt";
+	public static final int DEFAULTTTL = 5;
 	
 	private static String shareFolder = "wazaashare/";
 	
@@ -128,6 +137,32 @@ public class Wazaa {
 		}
 		return false;
 	}
+
+	public static String searchForFile(String text) {
+		try {
+			String uuid = Wazaa.generateUniqueID();
+			Map<String, String> commandArgs = 
+					new HashMap<String, String>();
+			commandArgs.put("name", 
+					URLEncoder.encode(
+							text, "UTF-8"));
+			commandArgs.put("sendip", 
+					InetAddress.getLocalHost().getHostAddress());
+			commandArgs.put("sendport", 
+					String.valueOf(Wazaa.getHTTPServer().getPort()));
+			commandArgs.put("ttl", String.valueOf(Wazaa.DEFAULTTTL));
+			commandArgs.put("id", uuid);
+			for (Machine m : Wazaa.getMachines()) {
+				try {
+					new HTTPClient(m, "GET", 
+							HTTPUtil.buildSearchFileCommand(commandArgs));
+				} catch (IOException e) { }
+			}
+			return uuid;
+		} catch (UnsupportedEncodingException | 
+				UnknownHostException e) { }
+		return null;
+	}
 	
 	public static List<Machine> getMachines() {
 		return machines;
@@ -135,6 +170,10 @@ public class Wazaa {
 	
 	public static String generateUniqueID() {
 		return UUID.randomUUID().toString();
+	}
+	
+	public static FoundFiles getFoundFiles() {
+		return foundFiles;
 	}
 
 	public synchronized static HTTPServer getHTTPServer() {
