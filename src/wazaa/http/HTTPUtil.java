@@ -19,14 +19,25 @@ public class HTTPUtil {
 			s.append("&id=" + commandArgs.get("id"));
 		}
 		s.append("&noask=");
+		String myMachine = "";
+		try {
+			myMachine = InetAddress.getLocalHost().getHostAddress()
+					+ ":" +
+					Wazaa.getHTTPServer().getPort();
+		} catch (UnknownHostException e) { }
+		boolean addMyMachine = true;
 		if (commandArgs.containsKey("noask") 
 				&& !commandArgs.get("noask").isEmpty()) {
-			s.append(commandArgs.get("noask") + "_");
+			s.append(commandArgs.get("noask"));
+			if (commandArgs.get("noask").contains(myMachine)) {
+				addMyMachine = false;
+			} else {
+				s.append("_");
+			}
 		}
-		try {
-			s.append(InetAddress.getLocalHost().getHostAddress() + ":" +
-					Wazaa.getHTTPServer().getPort());
-		} catch (UnknownHostException e) { }
+		if (addMyMachine) {
+			s.append(myMachine);
+		}
 		return s.toString();
 	}
 }
