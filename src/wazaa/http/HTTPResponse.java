@@ -58,7 +58,7 @@ public abstract class HTTPResponse {
 		byte[] resp;
 		if (getBody().length > 0) {
 			resp = new byte[headerBytes.length + getBody().length];
-			System.arraycopy(extraHeaders, 0, resp, 0, headerBytes.length);
+			System.arraycopy(headerBytes, 0, resp, 0, headerBytes.length);
 			System.arraycopy(getBody(), 0, resp, headerBytes.length, 
 					getBody().length);
 		} else {
