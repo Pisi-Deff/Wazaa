@@ -48,10 +48,14 @@ public class FileIOUtil {
 				sharePath)) {
 			for (Path file : ds) {
 				if (Files.isDirectory(file)) {
+					String folderPath = 
+						shareFolder.relativize(sharePath).toString() +
+						"/" +
+						file.getFileName().toString();
 					findFilesRecursivelyFromDirStream(
 							filter, foundFiles, 
 							Wazaa.getShareFolderPathForFile(
-									file.getFileName().toString()),
+									folderPath),
 							shareFolder);
 				} else if (filter.accept(file)) {
 					String relativeFileName = 
@@ -61,6 +65,7 @@ public class FileIOUtil {
 				}
 			}
 		} catch (IOException e) {
+			e.printStackTrace();
 			System.out.println("Error reading share folder contents. " +
 					"(" + sharePath.toAbsolutePath().toString() + ")");
 		}
