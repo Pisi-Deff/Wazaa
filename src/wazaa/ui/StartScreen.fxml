@@ -41,7 +41,7 @@
       </HBox>
       <Separator prefWidth="-1.0" />
       <Label text="Shared folder:" />
-      <TextField fx:id="shareFolderField" prefWidth="200.0" />
+      <TextField fx:id="shareFolderField" editable="false" prefWidth="200.0" />
       <Button mnemonicParsing="false" onAction="#shareFolderChangeButtonAction" text="Change..." />
       <Separator prefWidth="-1.0" valignment="CENTER" />
       <Label text="Initial machines:" />
