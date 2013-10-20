@@ -22,6 +22,7 @@ public class HTTPClient extends Thread {
 	private String method;
 	private String postContent;
 	
+	private boolean responseDone = false;
 	private String response;
 	private String responseFileName;
 	private byte[] responseFileBytes;
@@ -64,16 +65,7 @@ public class HTTPClient extends Thread {
 			conn.setRequestProperty("User-Agent", 
 					Wazaa.WAZAANAME + " v" + Wazaa.WAZAAVER);
 			
-			if (method.equals("POST") && postContent != null) {
-				conn.setDoOutput(true);
-				conn.setRequestProperty("Content-Type", "application/json");
-				BufferedWriter out = new BufferedWriter(
-						new OutputStreamWriter(conn.getOutputStream()));
-				out.write(postContent);
-				out.flush();
-				out.close();
-				conn.getOutputStream().close();
-			}
+			tryWritePostContent(conn);
 			
 			conn.connect();
 			
@@ -81,63 +73,97 @@ public class HTTPClient extends Thread {
 					+ url.toString() + ">: "
 					+ conn.getResponseCode());
 			
-			String disposition = conn.getHeaderField("Content-Disposition");
-			
-			if (disposition != null) {
-				// extracts file name from header field
-				int index = disposition.indexOf("filename=");
-				if (index > 0) {
-					responseFileName = disposition.substring(index + 10,
-							disposition.length() - 1);
-				}
-			} else if (url.toString().matches("/getfile\\?")) {
-				// extracts file name from URL
-				int lastSlash = url.toString().lastIndexOf("/");
-				int lastEquals = url.toString().lastIndexOf("=");
-				int latter = 
-						(lastSlash < lastEquals ? lastEquals : lastSlash);
-				responseFileName = url.toString().substring(
-						latter + 1,
-						url.toString().length());
-			}
+			trySetResponseFileName(conn);
 			
 			if (responseFileName != null) {
-				ByteArrayOutputStream byteStream = 
-						new ByteArrayOutputStream();
-				InputStream in = conn.getInputStream();
-				int bytesRead = -1;
-				byte[] buffer = new byte[1024];
-				while ((bytesRead = in.read(buffer)) != -1) {
-					byteStream.write(buffer, 0, bytesRead);
-				}
-				responseFileBytes = byteStream.toByteArray();
-				System.out.println("Received file: " + responseFileName);
+				getResponseFile(conn);
 			} else {
-				BufferedReader in = new BufferedReader(
-						new InputStreamReader(conn.getInputStream()));
-				response = "";
-				String line;
-				while ((line = in.readLine()) != null) { 
-					response += line;
-				}
-				in.close();
-				System.out.println("Response: " + response);
+				getTextResponse(conn);
 			}
 		} catch (IOException e) {
 			System.out.println("HTTPClient failed connection to <"
 					+ url.toString() + ">");
 		}
 	}
+
+	private void getTextResponse(HttpURLConnection conn)
+			throws IOException {
+		BufferedReader in = new BufferedReader(
+				new InputStreamReader(conn.getInputStream()));
+		response = "";
+		String line;
+		while ((line = in.readLine()) != null) { 
+			response += line;
+		}
+		in.close();
+		responseDone = true;
+		System.out.println("Response: " + response);
+	}
+
+	private void getResponseFile(HttpURLConnection conn)
+			throws IOException {
+		ByteArrayOutputStream byteStream = 
+				new ByteArrayOutputStream();
+		InputStream in = conn.getInputStream();
+		int bytesRead = -1;
+		byte[] buffer = new byte[1024];
+		while ((bytesRead = in.read(buffer)) != -1) {
+			byteStream.write(buffer, 0, bytesRead);
+		}
+		responseFileBytes = byteStream.toByteArray();
+		responseDone = true;
+		System.out.println("Received file: " + responseFileName);
+	}
+
+	private void tryWritePostContent(HttpURLConnection conn) 
+			throws IOException {
+		if (method.equals("POST") && postContent != null) {
+			conn.setDoOutput(true);
+			conn.setRequestProperty("Content-Type", "application/json");
+			BufferedWriter out = new BufferedWriter(
+					new OutputStreamWriter(conn.getOutputStream()));
+			out.write(postContent);
+			out.flush();
+			out.close();
+			conn.getOutputStream().close();
+		}
+	}
+
+	private void trySetResponseFileName(HttpURLConnection conn) {
+		String disposition = conn.getHeaderField("Content-Disposition");
+		
+		if (disposition != null) {
+			// extracts file name from header field
+			int index = disposition.indexOf("filename=");
+			if (index > 0) {
+				responseFileName = disposition.substring(index + 10,
+						disposition.length() - 1);
+			}
+		} else if (url.toString().matches("/getfile\\?")) {
+			// extracts file name from URL
+			int lastSlash = url.toString().lastIndexOf("/");
+			int lastEquals = url.toString().lastIndexOf("=");
+			int latter = 
+					(lastSlash < lastEquals ? lastEquals : lastSlash);
+			responseFileName = url.toString().substring(
+					latter + 1,
+					url.toString().length());
+		}
+	}
 	
-	public String getResponse() {
+	public synchronized boolean getResponseDone() {
+		return responseDone;
+	}
+	
+	public synchronized String getResponse() {
 		return response;
 	}
 	
-	public String getResponseFileName() {
+	public synchronized String getResponseFileName() {
 		return responseFileName;
 	}
 	
-	public byte[] getResponseFileBytes() {
+	public synchronized byte[] getResponseFileBytes() {
 		return responseFileBytes;
 	}
 }
