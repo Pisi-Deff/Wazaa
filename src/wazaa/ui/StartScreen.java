@@ -154,6 +154,9 @@ public class StartScreen implements Initializable {
 
     @FXML
     private void shareFolderChangeButtonAction(ActionEvent event) {
+    	shareDirChooser.setInitialDirectory(
+    			Wazaa.getShareFolderPath().toAbsolutePath().
+    			toFile().getParentFile());
     	File folder = shareDirChooser.showDialog(
     			startScreenBox.getScene().getWindow());
     	if (folder != null) {
