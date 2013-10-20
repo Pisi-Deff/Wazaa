@@ -10,7 +10,7 @@ import wazaa.http.HTTPClient;
 
 public class DownloadManager extends Thread {
 	private List<Download> downloads = 
-			Collections.synchronizedList(new ArrayList<Download>());
+				Collections.synchronizedList(new ArrayList<Download>());
 	
 	public DownloadManager() {
 		start();
@@ -31,8 +31,9 @@ public class DownloadManager extends Thread {
 		}
 	}
 	
-	public void addClient(File saveLocation, HTTPClient client) {
+	public void addDownload(HTTPClient client, File saveLocation) {
 		downloads.add(new Download(client, saveLocation));
+		Wazaa.getGUI().refreshDownloads();
 	}
 	
 	public List<Download> getDownloads() {

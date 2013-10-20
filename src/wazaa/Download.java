@@ -57,4 +57,10 @@ public class Download {
 			return "Downloading";
 		}
 	}
+	
+	@Override
+	public String toString() {
+		return getStatus() + ": <" + httpClient.getResponseFileName() + 
+				"> from: " + httpClient.getMachine().toString();
+	}
 }

@@ -8,6 +8,7 @@ import java.nio.file.InvalidPathException;
 import java.util.List;
 import java.util.ResourceBundle;
 
+import wazaa.Download;
 import wazaa.FileIOUtil;
 import wazaa.Machine;
 import wazaa.Wazaa;
@@ -64,6 +65,15 @@ public class MainScreen implements Initializable {
     @FXML
     private Button fileSearchButton;
     private String latestSearchUUID;
+
+    @FXML
+    private Button downloadsClearFinishedButton;
+
+    @FXML
+    private ListView<Download> downloadsList;
+
+    @FXML
+    private Button downloadsOpenSelectedButton;
 
     @FXML
     private TableView<WazaaFile> sharedFilesTable;
@@ -132,6 +142,10 @@ public class MainScreen implements Initializable {
 		});
 		downloadFC.setTitle("Choose save location");
 		downloadFC.setInitialDirectory(Wazaa.getShareFilePath("").toFile());
+		// downloads tab
+		downloadsList.setItems(
+				FXCollections.observableList(
+						Wazaa.getDownloadManager().getDownloads()));
 		// my files tab
 		sharedFilesFileNameCol.setCellValueFactory(
 				new PropertyValueFactory<WazaaFile, String>("fileName"));
@@ -170,8 +184,9 @@ public class MainScreen implements Initializable {
 				File saveLocation = downloadFC.showSaveDialog(
 						fileDownloadButton.getScene().getWindow());
 				if (saveLocation != null && !saveLocation.isDirectory()) {
-					Wazaa.getDownloadManager().addClient(saveLocation,
-							HTTPUtil.sendGetFileReq(selectedFile));
+					Wazaa.getDownloadManager().addDownload(
+							HTTPUtil.sendGetFileReq(selectedFile),
+							saveLocation);
 				}
 			} catch (IOException e) { 
 				// TODO: error, unable to dl file
@@ -187,6 +202,36 @@ public class MainScreen implements Initializable {
     		refreshFoundFiles();
     	}
     }
+
+	public void refreshFoundFiles() {
+		fileSearchTable.setItems(null);
+		if (latestSearchUUID != null) {
+			List<WazaaFoundFile> files = 
+					Wazaa.getFoundFiles().getFilesList(
+					latestSearchUUID);
+			if (files != null) {
+				fileSearchTable.setItems(
+						FXCollections.observableArrayList(
+								files));
+			}
+		}
+	}
+
+    @FXML
+    private void downloadsClearFinishedButtonAction(ActionEvent event) {
+    	// TODO
+    }
+
+    @FXML
+    private void downloadsOpenSelectedButtonAction(ActionEvent event) {
+    	// TODO
+    }
+
+	public synchronized void refreshDownloadsList() {
+		ObservableList<Download> list = downloadsList.getItems();
+		downloadsList.setItems(null);
+		downloadsList.setItems(list);
+	}
 
     @FXML
     private void refreshSharedFilesButtonAction(ActionEvent event) {
@@ -228,6 +273,7 @@ public class MainScreen implements Initializable {
     			addMachinesFromFileButton.getScene().getWindow());
     	if (file != null) {
     		int count = Wazaa.getMachinesFromFile(file.getAbsolutePath());
+    		// TODO: use count
     		refreshMachinesList();
     	}
     }
@@ -243,20 +289,6 @@ public class MainScreen implements Initializable {
 			.removeAll(machinesList.getSelectionModel().getSelectedItems());
 		refreshMachinesList();
     }
-
-	public void refreshFoundFiles() {
-		fileSearchTable.setItems(null);
-		if (latestSearchUUID != null) {
-			List<WazaaFoundFile> files = 
-					Wazaa.getFoundFiles().getFilesList(
-					latestSearchUUID);
-			if (files != null) {
-				fileSearchTable.setItems(
-						FXCollections.observableArrayList(
-								files));
-			}
-		}
-	}
 
 	public void refreshMachinesList() {
 		ObservableList<Machine> list = machinesList.getItems();

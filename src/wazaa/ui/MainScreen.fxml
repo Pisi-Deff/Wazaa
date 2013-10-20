@@ -25,11 +25,29 @@
                 </TableView>
                 <VBox fillWidth="true" maxHeight="1.7976931348623157E308" maxWidth="-Infinity" minWidth="-Infinity" prefHeight="-1.0" prefWidth="150.0" spacing="5.0" HBox.hgrow="NEVER">
                   <children>
-                    <Label text="No files selected" wrapText="true" />
-                    <Button fx:id="fileDownloadButton" disable="true" mnemonicParsing="false" onAction="#fileDownloadButtonAction" text="Download" />
-                    <Separator prefWidth="-1.0" />
                     <TextField id="searchFileField" fx:id="fileSearchField" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefWidth="-1.0" promptText="Search" />
                     <Button fx:id="fileSearchButton" disable="true" mnemonicParsing="false" onAction="#fileSearchButtonAction" text="Search" />
+                    <Separator prefWidth="-1.0" />
+                    <Button fx:id="fileDownloadButton" disable="true" mnemonicParsing="false" onAction="#fileDownloadButtonAction" text="Download selected" />
+                  </children>
+                  <padding>
+                    <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                  </padding>
+                </VBox>
+              </children>
+            </HBox>
+          </content>
+        </Tab>
+        <Tab text="Downloads">
+          <content>
+            <HBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="-1.0" prefWidth="-1.0">
+              <children>
+                <ListView id="machinesList" fx:id="downloadsList" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" orientation="VERTICAL" prefHeight="-1.0" prefWidth="-1.0" HBox.hgrow="ALWAYS" />
+                <VBox minWidth="-Infinity" prefHeight="-1.0" prefWidth="150.0" spacing="5.0" HBox.hgrow="NEVER">
+                  <children>
+                    <Button id="addMachinesFromURLButton" fx:id="downloadsClearFinishedButton" mnemonicParsing="false" onAction="#downloadsClearFinishedButtonAction" text="Clear finished" wrapText="false" />
+                    <Separator prefWidth="200.0" />
+                    <Button fx:id="downloadsOpenSelectedButton" mnemonicParsing="false" onAction="#downloadsOpenSelectedButtonAction" text="Open selected" />
                   </children>
                   <padding>
                     <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />

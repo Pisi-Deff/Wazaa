@@ -27,6 +27,7 @@ public class HTTPClient extends Thread {
 	private String responseFileName;
 	private byte[] responseFileBytes;
 	
+	private Machine machine;
 	private URL url;
 	
 	public HTTPClient(Machine machine, String method, String command)
@@ -37,6 +38,7 @@ public class HTTPClient extends Thread {
 	public HTTPClient(Machine machine, String method,
 			String command, String postContent)
 			throws IOException {
+		this.machine = machine;
 		this.method = method.toUpperCase();
 		if (this.method.equals("POST")) {
 			if (postContent == null) {
@@ -149,6 +151,10 @@ public class HTTPClient extends Thread {
 					latter + 1,
 					url.toString().length());
 		}
+	}
+	
+	public Machine getMachine() {
+		return machine;
 	}
 	
 	public synchronized boolean getResponseDone() {

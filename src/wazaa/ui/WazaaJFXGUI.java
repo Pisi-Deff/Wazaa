@@ -33,10 +33,10 @@ public class WazaaJFXGUI extends Application {
 	}
 
 	public synchronized void refreshFoundFiles() {
-		((MainScreen)root.getController("main")).refreshFoundFiles();
+		((MainScreen) root.getController("main")).refreshFoundFiles();
 	}
 	
 	public synchronized void refreshDownloads() {
-		
+		((MainScreen) root.getController("main")).refreshDownloadsList();
 	}
 }
