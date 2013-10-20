@@ -44,9 +44,10 @@ public class Wazaa {
 	public static final int DEFAULTPORT = 1215;
 	
 	public static final String DEFAULTMACHINESFILE = "machines.txt";
+	public static final String DEFAULTSHAREFOLDER = "wazaashare/";
 	public static final int DEFAULTTTL = 5;
 	
-	private static File shareFolder = new File("wazaashare/");
+	private static File shareFolder = new File(DEFAULTSHAREFOLDER);
 	
 	private static List<Machine> machines = 
 			Collections.synchronizedList(new ArrayList<Machine>());
