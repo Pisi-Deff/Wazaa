@@ -35,6 +35,7 @@ public class Wazaa {
 	
 	private static WazaaJFXGUI gui;
 	private static FoundFiles foundFiles = new FoundFiles();
+	private static DownloadManager downloadManager = new DownloadManager();
 	private static HTTPServer httpServer;
 	
 	public static final int DEFAULTPORT = 1215;
@@ -168,16 +169,20 @@ public class Wazaa {
 		return UUID.randomUUID().toString();
 	}
 	
-	public static void setGUI(WazaaJFXGUI gui) {
+	public synchronized static void setGUI(WazaaJFXGUI gui) {
 		Wazaa.gui = gui;
 	}
 	
-	public static WazaaJFXGUI getGUI() {
+	public synchronized static WazaaJFXGUI getGUI() {
 		return gui;
 	}
 	
 	public static FoundFiles getFoundFiles() {
 		return foundFiles;
+	}
+	
+	public static DownloadManager getDownloadManager() {
+		return downloadManager;
 	}
 
 	public synchronized static HTTPServer getHTTPServer() {

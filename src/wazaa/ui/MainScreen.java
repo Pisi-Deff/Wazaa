@@ -13,6 +13,7 @@ import wazaa.Machine;
 import wazaa.Wazaa;
 import wazaa.WazaaFile;
 import wazaa.WazaaFoundFile;
+import wazaa.http.HTTPUtil;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
@@ -43,6 +44,7 @@ public class MainScreen implements Initializable {
 
     @FXML
     private Button fileDownloadButton;
+    private FileChooser downloadFC = new FileChooser();
     
     @FXML
     private TableView<WazaaFoundFile> fileSearchTable;
@@ -86,7 +88,7 @@ public class MainScreen implements Initializable {
     
     @FXML
     private Button addMachinesFromFileButton;
-    private FileChooser fc = new FileChooser();
+    private FileChooser machinesFC = new FileChooser();
     
     @FXML
     private Button addMachinesFromURLButton;
@@ -101,13 +103,43 @@ public class MainScreen implements Initializable {
 				new PropertyValueFactory<WazaaFoundFile, String>("fileName"));
 		fileSearchPeerCol.setCellValueFactory(
 				new PropertyValueFactory<WazaaFoundFile, String>("machine"));
+		fileSearchField.textProperty().addListener(
+				new ChangeListener<String>() {
+					@Override
+					public void changed(
+							ObservableValue<? extends String> obsValue,
+							String oldValue, String newValue) {
+						if (newValue.isEmpty()) {
+							fileSearchButton.setDisable(true);
+						} else {
+							fileSearchButton.setDisable(false);
+						}
+					}
+		});
+		fileSearchTable.getSelectionModel().selectedItemProperty().
+			addListener(
+				new ChangeListener<WazaaFoundFile>() {
+					@Override
+					public void changed(
+							ObservableValue<? extends WazaaFoundFile> observable,
+							WazaaFoundFile oldValue, WazaaFoundFile newValue) {
+						if (newValue == null) {
+							fileDownloadButton.setDisable(true);
+						} else {
+							fileDownloadButton.setDisable(false);
+						}
+					}
+		});
+		downloadFC.setTitle("Choose save location");
+		downloadFC.setInitialDirectory(Wazaa.getShareFilePath("").toFile());
 		// my files tab
 		sharedFilesFileNameCol.setCellValueFactory(
 				new PropertyValueFactory<WazaaFile, String>("fileName"));
 		refreshSharedFilesButtonAction(null);
 		// machines tab
-    	fc.setTitle("Open machines file");
-    	fc.getExtensionFilters().add(new ExtensionFilter(
+		machinesFC.setInitialDirectory(Wazaa.getShareFilePath("").toFile());
+    	machinesFC.setTitle("Open machines file");
+    	machinesFC.getExtensionFilters().add(new ExtensionFilter(
     			"JSON", "*.json", "*.txt"));
 		
 		machinesList.getSelectionModel().
@@ -127,24 +159,24 @@ public class MainScreen implements Initializable {
 						}
 					}
 				});
-		fileSearchField.textProperty().addListener(
-				new ChangeListener<String>() {
-					@Override
-					public void changed(
-							ObservableValue<? extends String> obsValue,
-							String oldValue, String newValue) {
-						if (newValue.isEmpty()) {
-							fileSearchButton.setDisable(true);
-						} else {
-							fileSearchButton.setDisable(false);
-						}
-					}
-		});
 	}
 
     @FXML
     private void fileDownloadButtonAction(ActionEvent event) {
-    	
+    	WazaaFoundFile selectedFile = fileSearchTable.
+    			getSelectionModel().getSelectedItem();
+    	if (selectedFile != null) {
+			try {
+				File saveLocation = downloadFC.showSaveDialog(
+						fileDownloadButton.getScene().getWindow());
+				if (saveLocation != null && !saveLocation.isDirectory()) {
+					Wazaa.getDownloadManager().addClient(saveLocation,
+							HTTPUtil.sendGetFileReq(selectedFile));
+				}
+			} catch (IOException e) { 
+				// TODO: error, unable to dl file
+			}
+    	}
     }
 	
     @FXML
@@ -192,7 +224,7 @@ public class MainScreen implements Initializable {
 
     @FXML
     private void addMachinesFromFileButtonAction(ActionEvent event) {
-    	File file = fc.showOpenDialog(
+    	File file = machinesFC.showOpenDialog(
     			addMachinesFromFileButton.getScene().getWindow());
     	if (file != null) {
     		int count = Wazaa.getMachinesFromFile(file.getAbsolutePath());

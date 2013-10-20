@@ -7,6 +7,7 @@ import java.util.Map;
 
 import wazaa.Machine;
 import wazaa.Wazaa;
+import wazaa.WazaaFoundFile;
 
 public class HTTPUtil {
 	public static String buildSearchFileCommand(
@@ -81,5 +82,11 @@ public class HTTPUtil {
 				new HTTPClient(m, "GET", command);
 			} catch (IOException e) { }
 		}
+	}
+	
+	public static HTTPClient sendGetFileReq(WazaaFoundFile file)
+			throws IOException {
+		return new HTTPClient(file.getMachine(), "GET", 
+				"getfile?fullname=" + file.getFileName());
 	}
 }
