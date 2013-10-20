@@ -96,7 +96,12 @@ public class StartScreen implements Initializable {
 							.setListeningStatusLabelText(portField.getText());
 						root.switchToScene("main");
 					} catch (IOException e) {
-						portField.requestFocus();
+						showSettingsToggleButton.setSelected(true);
+						if (!startScreenBox.getChildren().contains(
+								settingsBox)) {
+							showSettingsToggleButtonAction(null);
+						}
+						shareFolderField.requestFocus();
 						Popup p = new Popup();
 						VBox box = new VBox();
 						Label l = new Label("Unable to use specified share folder.");
@@ -107,12 +112,23 @@ public class StartScreen implements Initializable {
 			            box.setPadding(new Insets(5));
 			            p.getContent().add(box);
 			            p.setAutoHide(true);
+			            p.setHideOnEscape(true);
 			            p.show(portField.getScene().getWindow());
 					}
 				} else {
+					showSettingsToggleButton.setSelected(true);
+					if (!startScreenBox.getChildren().contains(
+							settingsBox)) {
+						showSettingsToggleButtonAction(null);
+					}
 					portField.requestFocus();
 				}
 			} catch (IOException e) {
+				showSettingsToggleButton.setSelected(true);
+				if (!startScreenBox.getChildren().contains(
+						settingsBox)) {
+					showSettingsToggleButtonAction(null);
+				}
 				portField.requestFocus();
 				Popup p = new Popup();
 				VBox box = new VBox();
@@ -124,9 +140,15 @@ public class StartScreen implements Initializable {
 	            box.setPadding(new Insets(5));
 	            p.getContent().add(box);
 	            p.setAutoHide(true);
+	            p.setHideOnEscape(true);
 	            p.show(portField.getScene().getWindow());
 			}
 		} catch (NumberFormatException e) {
+			showSettingsToggleButton.setSelected(true);
+			if (!startScreenBox.getChildren().contains(
+					settingsBox)) {
+				showSettingsToggleButtonAction(null);
+			}
 			portField.requestFocus();
 			Popup p = new Popup();
 			VBox box = new VBox();
@@ -138,6 +160,7 @@ public class StartScreen implements Initializable {
             box.setPadding(new Insets(5));
             p.getContent().add(box);
             p.setAutoHide(true);
+            p.setHideOnEscape(true);
             p.show(portField.getScene().getWindow());
 		}
 	}
