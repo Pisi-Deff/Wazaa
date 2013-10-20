@@ -8,33 +8,46 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.*?>
 
-<VBox alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="-1.0" prefWidth="-1.0" spacing="10.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2" fx:controller="wazaa.ui.StartScreen">
-  <children>
-    <Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="-1.0" prefWidth="-1.0">
-      <children>
-        <ImageView fitHeight="0.0" fitWidth="260.0" layoutX="0.0" layoutY="0.0" pickOnBounds="true" preserveRatio="true" rotate="0.0">
-          <image>
-            <Image url="@wazaa.png" />
-          </image>
-        </ImageView>
-      </children>
-    </Pane>
-    <Button fx:id="startButton" alignment="CENTER" cancelButton="false" contentDisplay="CENTER" defaultButton="false" ellipsisString="" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" mouseTransparent="false" prefHeight="100.0" prefWidth="100.0" style="" text="Start" textAlignment="CENTER" textOverrun="ELLIPSIS" wrapText="true">
-      <font>
-        <Font name="System Bold" size="24.0" />
-      </font>
-      <VBox.margin>
-        <Insets />
-      </VBox.margin>
-    </Button>
-    <HBox alignment="CENTER" prefHeight="-1.0" prefWidth="200.0" spacing="10.0">
-      <children>
-        <Label text="Port:" />
-        <TextField fx:id="portField" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefWidth="85.0" promptText="Listening port" />
-      </children>
-    </HBox>
-  </children>
-  <padding>
-    <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
-  </padding>
-</VBox>
+<HBox fx:id="startScreenBox" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="-1.0" prefWidth="-1.0" spacing="10.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2" fx:controller="wazaa.ui.StartScreen">
+  <VBox alignment="CENTER" spacing="5.0" HBox.hgrow="ALWAYS">
+    <children>
+      <Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="-1.0" prefWidth="-1.0">
+        <children>
+          <ImageView fitHeight="0.0" fitWidth="260.0" layoutX="0.0" layoutY="0.0" pickOnBounds="true" preserveRatio="true" rotate="0.0">
+            <image>
+              <Image url="@wazaa.png" />
+            </image>
+          </ImageView>
+        </children>
+      </Pane>
+      <Button fx:id="startButton" alignment="CENTER" cancelButton="false" contentDisplay="CENTER" defaultButton="false" ellipsisString="" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" mouseTransparent="false" onAction="#startButtonAction" prefHeight="100.0" prefWidth="100.0" style="" text="Start" textAlignment="CENTER" textOverrun="ELLIPSIS" wrapText="true">
+        <font>
+          <Font name="System Bold" size="24.0" />
+        </font>
+      </Button>
+      <ToggleButton fx:id="showSettingsToggleButton" mnemonicParsing="false" onAction="#showSettingsToggleButtonAction" text="Show settings" />
+    </children>
+    <padding>
+      <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+    </padding>
+  </VBox>
+  <VBox fx:id="settingsBox" alignment="TOP_CENTER" fillWidth="true" prefHeight="-1.0" prefWidth="-1.0" spacing="2.0" HBox.hgrow="NEVER">
+    <children>
+      <HBox alignment="CENTER" prefHeight="-1.0" prefWidth="-1.0" spacing="5.0">
+        <children>
+          <Label text="Port:" HBox.hgrow="NEVER" />
+          <TextField fx:id="portField" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefWidth="-1.0" promptText="Listening port" HBox.hgrow="ALWAYS" />
+        </children>
+      </HBox>
+      <Separator prefWidth="-1.0" />
+      <Label text="Shared folder:" />
+      <TextField fx:id="shareFolderField" prefWidth="200.0" />
+      <Button mnemonicParsing="false" onAction="#shareFolderChangeButtonAction" text="Change..." />
+      <Separator prefWidth="-1.0" valignment="CENTER" />
+      <Label text="Initial machines:" />
+    </children>
+    <padding>
+      <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+    </padding>
+  </VBox>
+</HBox>

@@ -52,12 +52,12 @@ public class Wazaa {
 			Collections.synchronizedList(new ArrayList<Machine>());
 	
 	public static void main(String[] args) {
-		prepareShareFolder(shareFolder.toPath());
-		
 		Application.launch(WazaaJFXGUI.class, args);
 	}
 	
-	private static void prepareShareFolder(Path sharePath) {
+	public static void prepareShareFolder()
+			throws IOException {
+		Path sharePath = shareFolder.toPath();
 		if (!Files.isDirectory(sharePath)) {
 			try {
 				Files.createDirectories(sharePath);
@@ -68,7 +68,7 @@ public class Wazaa {
 						"Share folder does not exist "
 						+ "and failure creating it. " +
 						"(" + sharePath.toAbsolutePath().toString() + ")");
-				System.exit(1);
+				throw new IOException();
 			}
 		}
 		System.out.println("Using share folder: "

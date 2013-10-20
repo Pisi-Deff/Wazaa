@@ -158,7 +158,6 @@ public class MainScreen implements Initializable {
 		// my files tab
 		sharedFilesFileNameCol.setCellValueFactory(
 				new PropertyValueFactory<WazaaFile, String>("fileName"));
-		refreshSharedFilesButtonAction(null);
 		// machines tab
 		machinesFC.setInitialDirectory(Wazaa.getShareFolderPathForFile("").toFile());
     	machinesFC.setTitle("Open machines file");
@@ -299,7 +298,7 @@ public class MainScreen implements Initializable {
 	}
 
     @FXML
-    private void refreshSharedFilesButtonAction(ActionEvent event) {
+    public void refreshSharedFilesButtonAction(ActionEvent event) {
     	sharedFilesTable.setItems(
 				FXCollections.observableList(FileIOUtil.findFiles("")));
     }
