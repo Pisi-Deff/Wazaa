@@ -6,8 +6,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import wazaa.ui.WazaaJFXGUI;
-
 public class FoundFiles {
 	private Map<String, List<WazaaFoundFile>> foundFiles = 
 			new HashMap<String, List<WazaaFoundFile>>();
