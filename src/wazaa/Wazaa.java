@@ -32,6 +32,12 @@ import wazaa.http.HTTPServer;
 import wazaa.http.HTTPUtil;
 import wazaa.ui.WazaaJFXGUI;
 
+/**
+ * P2P file sharing software Wazaa.
+ * Made for Network Applications II course.
+ * 
+ * @author Eerik Mägi 112156
+ */
 public class Wazaa {
 	public static final String WAZAANAME = "Wazaa";
 	public static final String WAZAAVER = "0.1";
