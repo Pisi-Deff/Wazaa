@@ -109,13 +109,15 @@ public class Wazaa {
 				jsonString += line;
 			}
 			count = parseMachinesFromJson(jsonString);
+			System.out.println("Read " + count + " machines from <"
+					+ fileName + ">");
 		} catch (FileNotFoundException e) {
 			System.out.println("Machines file missing "
-					+ "or inacessible. ("
-					+ DEFAULTMACHINESFILE + ")");
+					+ "or inacessible. <"
+					+ fileName + ">");
 		} catch (IOException e) {
-			System.out.println("Invalid syntax in machines file ("
-					+ DEFAULTMACHINESFILE + "). Skipping.");
+			System.out.println("Invalid json syntax in machines file <"
+					+ fileName + ">. Skipping.");
 		} finally {
 			try {
 				in.close();
