@@ -165,7 +165,6 @@ public class Wazaa {
 	public static boolean addMachine(String IPStr, String PortStr) {
 		try {
 			Machine m = new Machine(IPStr, PortStr);
-			// TODO ignore own ip+port
 			if (!(machines.contains(m) || isMyMachine(m))) {
 				machines.add(m);
 				System.out.println("Added machine: "

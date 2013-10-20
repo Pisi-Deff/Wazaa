@@ -29,7 +29,8 @@ public class FileIOUtil {
 				public boolean accept(Path entry) throws IOException {
 					String actual = 
 							entry.getFileName().toString().toLowerCase();
-					return actual.contains(search.toLowerCase()); //TODO search better
+					//TODO search better
+					return actual.contains(search.toLowerCase());
 				}
 			};
 			

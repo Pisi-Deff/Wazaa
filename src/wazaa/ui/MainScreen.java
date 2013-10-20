@@ -226,7 +226,17 @@ public class MainScreen implements Initializable {
 							saveLocation);
 				}
 			} catch (IOException e) { 
-				// TODO: error, unable to dl file
+				Popup p = new Popup();
+				VBox box = new VBox();
+				Label l = new Label("Unable to connect to peer.");
+				box.getChildren().add(l);
+	            box.setStyle("-fx-background-color: #FFD0A0;"
+	            		+ "-fx-border-color: #000000;"
+	            		+ "-fx-border-width: 1;");
+	            box.setPadding(new Insets(5));
+	            p.getContent().add(box);
+	            p.setAutoHide(true);
+	            p.show(downloadsOpenSelectedButton.getScene().getWindow());
 			}
     	}
     }
@@ -339,7 +349,17 @@ public class MainScreen implements Initializable {
     				host += ":" + parts[i];
     			}
     			if (!Wazaa.addMachine(host, port)) {
-        			// TODO: add error popup
+    				Popup p = new Popup();
+    				VBox box = new VBox();
+    				Label l = new Label("Invalid machine.");
+    				box.getChildren().add(l);
+    	            box.setStyle("-fx-background-color: #FFD0A0;"
+    	            		+ "-fx-border-color: #000000;"
+    	            		+ "-fx-border-width: 1;");
+    	            box.setPadding(new Insets(5));
+    	            p.getContent().add(box);
+    	            p.setAutoHide(true);
+    	            p.show(downloadsOpenSelectedButton.getScene().getWindow());
     			}
     		}
     	}
@@ -351,7 +371,20 @@ public class MainScreen implements Initializable {
     			addMachinesFromFileButton.getScene().getWindow());
     	if (file != null) {
     		int count = Wazaa.getMachinesFromFile(file.getAbsolutePath());
-    		// TODO: use count
+    		if (count == 0) {
+				Popup p = new Popup();
+				VBox box = new VBox();
+				Label l = new Label("0 machines added, empty or "
+							+ "invalid json file.");
+				box.getChildren().add(l);
+	            box.setStyle("-fx-background-color: #FFD0A0;"
+	            		+ "-fx-border-color: #000000;"
+	            		+ "-fx-border-width: 1;");
+	            box.setPadding(new Insets(5));
+	            p.getContent().add(box);
+	            p.setAutoHide(true);
+	            p.show(downloadsOpenSelectedButton.getScene().getWindow());
+    		}
     	}
     }
 
@@ -362,10 +395,32 @@ public class MainScreen implements Initializable {
 				URL u = new URL(addMachinesFromURLField.getText());
 				int count = Wazaa.getMachinesFromURL(u);
 				if (count == 0) {
-					// TODO: add error popup
+					Popup p = new Popup();
+					VBox box = new VBox();
+					Label l = new Label(
+							"0 machines added, empty or "
+							+ "invalid json file at URL.");
+					box.getChildren().add(l);
+		            box.setStyle("-fx-background-color: #FFD0A0;"
+		            		+ "-fx-border-color: #000000;"
+		            		+ "-fx-border-width: 1;");
+		            box.setPadding(new Insets(5));
+		            p.getContent().add(box);
+		            p.setAutoHide(true);
+		            p.show(downloadsOpenSelectedButton.getScene().getWindow());
 				}
 			} catch (MalformedURLException e) {
-				// TODO: add error popup
+				Popup p = new Popup();
+				VBox box = new VBox();
+				Label l = new Label("Invalid URL.");
+				box.getChildren().add(l);
+	            box.setStyle("-fx-background-color: #FFD0A0;"
+	            		+ "-fx-border-color: #000000;"
+	            		+ "-fx-border-width: 1;");
+	            box.setPadding(new Insets(5));
+	            p.getContent().add(box);
+	            p.setAutoHide(true);
+	            p.show(downloadsOpenSelectedButton.getScene().getWindow());
 			}
     	}
     }
@@ -386,4 +441,6 @@ public class MainScreen implements Initializable {
 	public void setListeningStatusLabelText(String text) {
 		listeningStatusLabel.setText(text);
 	}
+	
+	// TODO: make a class for popups
 }
