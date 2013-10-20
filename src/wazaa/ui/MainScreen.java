@@ -331,16 +331,13 @@ public class MainScreen implements Initializable {
     @FXML
     private void addMachineButtonAction(ActionEvent event) {
     	if (!addMachineField.getText().isEmpty()) {
-    		System.out.println("HERE");
     		String[] parts = addMachineField.getText().split(":");
-    		System.out.println("HERE2");
     		if (parts.length >= 2) {
     			String port = parts[parts.length - 1];
     			String host = parts[0];
     			for (int i = 1; i < parts.length - 1; i++) {
     				host += ":" + parts[i];
     			}
-    			System.out.println("host: " + host + " p: " + port);
     			if (!Wazaa.addMachine(host, port)) {
         			// TODO: add error popup
     			}
