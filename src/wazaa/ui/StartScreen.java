@@ -2,8 +2,8 @@ package wazaa.ui;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.net.URL;
-import java.nio.file.FileSystem;
 import java.nio.file.Paths;
 import java.util.ResourceBundle;
 
@@ -60,6 +60,7 @@ public class StartScreen implements Initializable {
 
     @FXML
     private TextField machinesURLField;
+    private URL initialMachinesURL;
 	
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
@@ -104,6 +105,15 @@ public class StartScreen implements Initializable {
 				Paths.get("").toAbsolutePath().toFile());
     	machinesFC.getExtensionFilters().add(new ExtensionFilter(
     			"JSON", "*.json", "*.txt"));
+    	machinesURLField.textProperty().addListener(
+    			new ChangeListener<String>() {
+					@Override
+					public void changed(
+							ObservableValue<? extends String> observable,
+							String oldValue, String newValue) {
+						machinesURLCheckBox.setSelected(false);
+					}
+				});
 	}
 	
 	@FXML
@@ -121,6 +131,10 @@ public class StartScreen implements Initializable {
 						Wazaa.getMachinesFromFile(
 								initialMachinesFile.
 								getAbsolutePath().toString());
+					}
+					if (machinesURLCheckBox.isSelected() &&
+							initialMachinesURL != null) {
+						Wazaa.getMachinesFromURL(initialMachinesURL);
 					}
 					
 					try {
@@ -142,7 +156,8 @@ public class StartScreen implements Initializable {
 						shareFolderField.requestFocus();
 						Popup p = new Popup();
 						VBox box = new VBox();
-						Label l = new Label("Unable to use specified share folder.");
+						Label l = new Label(
+								"Unable to use specified share folder.");
 						box.getChildren().add(l);
 			            box.setStyle("-fx-background-color: #FFD0A0;"
 			            		+ "-fx-border-color: #000000;"
@@ -245,6 +260,23 @@ public class StartScreen implements Initializable {
 
     @FXML
     private void machinesURLCheckBoxAction(ActionEvent event) {
-    	
+    	try {
+    		initialMachinesURL = new URL(machinesURLField.getText());
+    	} catch (MalformedURLException e) {
+            machinesURLCheckBox.setSelected(false);
+			machinesURLField.requestFocus();
+			Popup p = new Popup();
+			VBox box = new VBox();
+			Label l = new Label("Invalid URL");
+			box.getChildren().add(l);
+            box.setStyle("-fx-background-color: #FFD0A0;"
+            		+ "-fx-border-color: #000000;"
+            		+ "-fx-border-width: 1;");
+            box.setPadding(new Insets(5));
+            p.getContent().add(box);
+            p.setAutoHide(true);
+            p.setHideOnEscape(true);
+            p.show(machinesURLField.getScene().getWindow());
+    	}
     }
 }
