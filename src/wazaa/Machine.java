@@ -4,6 +4,7 @@ import java.net.InetAddress;
 import java.net.UnknownHostException;
 
 public class Machine {
+	private String host;
 	private InetAddress ip;
 	private int port;
 	
@@ -11,6 +12,7 @@ public class Machine {
 			throws UnknownHostException,
 			IllegalArgumentException {
 		this.ip = InetAddress.getByName(ip);
+		this.host = ip;
 		this.port = Integer.parseInt(port);
 		if (this.port < 0 || this.port > 65535) {
 			throw new IllegalArgumentException();
@@ -58,6 +60,10 @@ public class Machine {
 	
 	@Override
 	public String toString() {
-		return ip.getHostAddress() + ":" + port;
+		String h = ip.getHostAddress();
+		if (host != null) {
+			h = host;
+		}
+		return h + ":" + port;
 	}
 }
