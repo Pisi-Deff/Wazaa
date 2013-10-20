@@ -26,6 +26,7 @@ import javafx.application.Application;
 
 import com.eclipsesource.json.JsonArray;
 import com.eclipsesource.json.JsonValue;
+import com.eclipsesource.json.ParseException;
 
 import wazaa.http.HTTPClient;
 import wazaa.http.HTTPServer;
@@ -141,23 +142,25 @@ public class Wazaa {
 				json = new String(c.getResponseFileBytes());
 			}
 			count = parseMachinesFromJson(json);
-		} catch (Exception e) { }
+		} catch (Throwable e) { }
 		return count;
 	}
 
 	public static int parseMachinesFromJson(String jsonString)
-			throws IOException {
+			throws IOException, ParseException {
 		int count = 0;
 		if (jsonString != null) {
-			JsonArray jsonMachines = JsonArray.readFrom(jsonString);
-			for (JsonValue val : jsonMachines) {
-				JsonArray machineArr = val.asArray();
-				String IPStr = machineArr.get(0).asString();
-				String PortStr = machineArr.get(1).asString();
-				if (addMachine(IPStr, PortStr)) {
-					count++;
+			try {
+				JsonArray jsonMachines = JsonArray.readFrom(jsonString);
+				for (JsonValue val : jsonMachines) {
+					JsonArray machineArr = val.asArray();
+					String IPStr = machineArr.get(0).asString();
+					String PortStr = machineArr.get(1).asString();
+					if (addMachine(IPStr, PortStr)) {
+						count++;
+					}
 				}
-			}
+			} catch (ParseException e) { }
 		}
 		return count;
 	}
