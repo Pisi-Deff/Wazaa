@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.net.InetAddress;
+import java.net.URL;
 import java.net.URLEncoder;
 import java.net.UnknownHostException;
 import java.nio.file.FileSystems;
@@ -25,6 +26,7 @@ import javafx.application.Application;
 import com.eclipsesource.json.JsonArray;
 import com.eclipsesource.json.JsonValue;
 
+import wazaa.http.HTTPClient;
 import wazaa.http.HTTPServer;
 import wazaa.http.HTTPUtil;
 import wazaa.ui.WazaaJFXGUI;
@@ -51,8 +53,6 @@ public class Wazaa {
 	public static void main(String[] args) {
 		Path sharePath = FileSystems.getDefault().getPath(shareFolder);
 		prepareShareFolder(sharePath);
-		
-		getMachinesFromFile(DEFAULTMACHINESFILE);
 		
 		Application.launch(WazaaJFXGUI.class, args);
 	}
@@ -106,17 +106,38 @@ public class Wazaa {
 		}
 		return count;
 	}
+	
+	public static int getMachinesFromURL(URL url) {
+		int count = 0;
+		try {
+			HTTPClient c = new HTTPClient(url);
+			while (c.isAlive() && !c.getResponseDone()) {
+				Thread.sleep(10);
+			}
+			// TODO: needs refactoring
+			String json = null;
+			if (c.getResponse() != null) {
+				json = c.getResponse();
+			} else if (c.getResponseFileBytes() != null) {
+				json = new String(c.getResponseFileBytes());
+			}
+			count = parseMachinesFromJson(json);
+		} catch (Exception e) { }
+		return count;
+	}
 
 	public static int parseMachinesFromJson(String jsonString)
 			throws IOException {
 		int count = 0;
-		JsonArray jsonMachines = JsonArray.readFrom(jsonString);
-		for (JsonValue val : jsonMachines) {
-			JsonArray machineArr = val.asArray();
-			String IPStr = machineArr.get(0).asString();
-			String PortStr = machineArr.get(1).asString();
-			if (addMachine(IPStr, PortStr)) {
-				count++;
+		if (jsonString != null) {
+			JsonArray jsonMachines = JsonArray.readFrom(jsonString);
+			for (JsonValue val : jsonMachines) {
+				JsonArray machineArr = val.asArray();
+				String IPStr = machineArr.get(0).asString();
+				String PortStr = machineArr.get(1).asString();
+				if (addMachine(IPStr, PortStr)) {
+					count++;
+				}
 			}
 		}
 		return count;
@@ -126,14 +147,15 @@ public class Wazaa {
 		try {
 			Machine m = new Machine(IPStr, PortStr);
 			// TODO ignore own ip+port
-			if (!machines.contains(m)) {
+			if (!(machines.contains(m) || isMyMachine(m))) {
 				machines.add(m);
 				System.out.println("Added machine: "
 						+ m.getIP().getHostAddress() + ":"
 						+ m.getPort());
+				gui.refreshMachines();
 				return true;
 			}
-		} catch (UnknownHostException | NumberFormatException e) {
+		} catch (UnknownHostException | IllegalArgumentException e) {
 			System.out.println("Skipping invalid machine: " + IPStr
 					+ " - " + PortStr);
 		}
@@ -191,6 +213,20 @@ public class Wazaa {
 
 	public synchronized static void setHTTPServer(HTTPServer httpServer) {
 		Wazaa.httpServer = httpServer;
+	}
+
+	public static boolean isMyMachine(Machine m) 
+			throws UnknownHostException {
+		String myIP = InetAddress.
+				getLocalHost().getHostAddress();
+		int myPort = 0;
+		try {
+			myPort = getHTTPServer().getPort();
+		} catch (Throwable e) {
+			e.printStackTrace();
+		}
+		return (m.getIP().getHostAddress().equals(myIP) &&
+			m.getPort() == myPort);
 	}
 
 }

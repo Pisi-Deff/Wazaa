@@ -67,6 +67,8 @@ public class StartScreen implements Initializable {
 						((MainScreen)root.getController("main"))
 							.setListeningStatusLabelText(portField.getText());
 						root.switchToScene("main");
+						// TODO: tmp
+						Wazaa.getMachinesFromFile(Wazaa.DEFAULTMACHINESFILE);
 					} else {
 						portField.requestFocus();
 					}

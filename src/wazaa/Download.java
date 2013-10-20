@@ -42,6 +42,10 @@ public class Download {
 		return httpClient;
 	}
 	
+	public File getSaveLocation() {
+		return saveLocation;
+	}
+	
 	public synchronized boolean isFinished() {
 		return httpClient.getResponseDone();
 	}

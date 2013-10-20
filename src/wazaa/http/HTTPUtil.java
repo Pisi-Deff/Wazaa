@@ -54,11 +54,7 @@ public class HTTPUtil {
 					.split("_");
 		}
 		for (Machine m : Wazaa.getMachines()) {
-			if (m.getIP().getHostAddress().equals(
-					InetAddress.
-					getLocalHost().getHostAddress()) &&
-				m.getPort() == 
-				Wazaa.getHTTPServer().getPort()) {
+			if (Wazaa.isMyMachine(m)) {
 				continue;
 			} else if (noaskMachines != null) {
 				boolean isNoAsk = false;
@@ -83,7 +79,7 @@ public class HTTPUtil {
 			} catch (IOException e) { }
 		}
 	}
-	
+
 	public static HTTPClient sendGetFileReq(WazaaFoundFile file)
 			throws IOException {
 		return new HTTPClient(file.getMachine(), "GET", 

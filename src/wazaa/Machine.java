@@ -8,9 +8,13 @@ public class Machine {
 	private int port;
 	
 	public Machine(String ip, String port)
-			throws UnknownHostException, NumberFormatException {
+			throws UnknownHostException,
+			IllegalArgumentException {
 		this.ip = InetAddress.getByName(ip);
 		this.port = Integer.parseInt(port);
+		if (this.port < 0 || this.port > 65535) {
+			throw new IllegalArgumentException();
+		}
 	}
 	
 	public Machine(InetAddress ip, int port) {

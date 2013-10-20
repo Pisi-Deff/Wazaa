@@ -22,6 +22,7 @@ public class WazaaJFXGUI extends Application {
 			root.switchToScene("start");
 			
 			stage.show();
+			
 		} catch (Exception e) {}
 	}
 	
@@ -38,5 +39,9 @@ public class WazaaJFXGUI extends Application {
 	
 	public synchronized void refreshDownloads() {
 		((MainScreen) root.getController("main")).refreshDownloadsList();
+	}
+	
+	public synchronized void refreshMachines() {
+		((MainScreen) root.getController("main")).refreshMachinesList();
 	}
 }

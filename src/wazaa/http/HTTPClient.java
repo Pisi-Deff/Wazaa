@@ -51,7 +51,14 @@ public class HTTPClient extends Thread {
 		this.url = new URL("http://" + machine.toString()
 				+ "/" + command);
 		
-		this.setName("HTTPClientThread");
+		start();
+	}
+	
+	public HTTPClient(URL url)
+			throws IOException {
+		this.url = url;
+		this.method = "GET";
+		
 		start();
 	}
 	

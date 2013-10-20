@@ -19,7 +19,7 @@
         </ImageView>
       </children>
     </Pane>
-    <Button fx:id="startButton" alignment="CENTER" cancelButton="false" contentDisplay="CENTER" defaultButton="true" ellipsisString="" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" mouseTransparent="false" prefHeight="100.0" prefWidth="100.0" style="" text="Start" textAlignment="CENTER" textOverrun="ELLIPSIS" wrapText="true">
+    <Button fx:id="startButton" alignment="CENTER" cancelButton="false" contentDisplay="CENTER" defaultButton="false" ellipsisString="" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" mouseTransparent="false" prefHeight="100.0" prefWidth="100.0" style="" text="Start" textAlignment="CENTER" textOverrun="ELLIPSIS" wrapText="true">
       <font>
         <Font name="System Bold" size="24.0" />
       </font>

@@ -3,8 +3,10 @@ package wazaa.ui;
 import java.awt.Desktop;
 import java.io.File;
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.file.InvalidPathException;
+import java.util.Iterator;
 import java.util.List;
 import java.util.ResourceBundle;
 
@@ -23,6 +25,7 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.geometry.Insets;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
@@ -92,16 +95,22 @@ public class MainScreen implements Initializable {
 
     @FXML
     private ListView<Machine> machinesList;
+
+    @FXML
+    private TextField addMachineField;
     
     @FXML
     private Button addMachineButton;
+
+    @FXML
+    private TextField addMachinesFromURLField;
+    
+    @FXML
+    private Button addMachinesFromURLButton;
     
     @FXML
     private Button addMachinesFromFileButton;
     private FileChooser machinesFC = new FileChooser();
-    
-    @FXML
-    private Button addMachinesFromURLButton;
     
     @FXML
     private Button removeSelectedMachinesButton;
@@ -173,6 +182,33 @@ public class MainScreen implements Initializable {
 						}
 					}
 				});
+		addMachineField.textProperty().addListener(
+				new ChangeListener<String>() {
+					@Override
+					public void changed(
+							ObservableValue<? extends String> obsValue,
+							String oldValue, String newValue) {
+						if (newValue.isEmpty()) {
+							addMachineButton.setDisable(true);
+						} else {
+							addMachineButton.setDisable(false);
+						}
+					}
+		});
+
+		addMachinesFromURLField.textProperty().addListener(
+				new ChangeListener<String>() {
+					@Override
+					public void changed(
+							ObservableValue<? extends String> obsValue,
+							String oldValue, String newValue) {
+						if (newValue.isEmpty()) {
+							addMachinesFromURLButton.setDisable(true);
+						} else {
+							addMachinesFromURLButton.setDisable(false);
+						}
+					}
+		});
 	}
 
     @FXML
@@ -219,12 +255,41 @@ public class MainScreen implements Initializable {
 
     @FXML
     private void downloadsClearFinishedButtonAction(ActionEvent event) {
-    	// TODO
+    	List<Download> downloads = 
+    			Wazaa.getDownloadManager().getDownloads();
+    	synchronized (downloads) {
+			Iterator<Download> iter = downloads.iterator();
+			while (iter.hasNext()) {
+				Download d = iter.next();
+				if (d.isWritten()) {
+					iter.remove();
+				}
+			}
+		}
+    	refreshDownloadsList();
     }
 
     @FXML
     private void downloadsOpenSelectedButtonAction(ActionEvent event) {
-    	// TODO
+    	if (downloadsList.getSelectionModel().getSelectedItem() != null) {
+	    	try {
+				Desktop.getDesktop().browse(
+						downloadsList.getSelectionModel().getSelectedItem().
+						getSaveLocation().toURI());
+			} catch (InvalidPathException | IOException e) {
+				Popup p = new Popup();
+				VBox box = new VBox();
+				Label l = new Label("File not yet written to disk.");
+				box.getChildren().add(l);
+	            box.setStyle("-fx-background-color: #FFD0A0;"
+	            		+ "-fx-border-color: #000000;"
+	            		+ "-fx-border-width: 1;");
+	            box.setPadding(new Insets(5));
+	            p.getContent().add(box);
+	            p.setAutoHide(true);
+	            p.show(downloadsOpenSelectedButton.getScene().getWindow());
+			}
+    	}
     }
 
 	public synchronized void refreshDownloadsList() {
@@ -264,7 +329,16 @@ public class MainScreen implements Initializable {
 	
     @FXML
     private void addMachineButtonAction(ActionEvent event) {
-    	
+    	if (!addMachineField.getText().isEmpty()) {
+    		System.out.println("HERE");
+    		String[] parts = addMachineField.getText().split(":");
+    		System.out.println("HERE2");
+    		if (!(parts.length == 2 && 
+    				Wazaa.addMachine(parts[0], parts[1]))) {
+    			// TODO: add error popup
+    		}
+    		System.out.println("HERE3");
+    	}
     }
 
     @FXML
@@ -274,23 +348,31 @@ public class MainScreen implements Initializable {
     	if (file != null) {
     		int count = Wazaa.getMachinesFromFile(file.getAbsolutePath());
     		// TODO: use count
-    		refreshMachinesList();
     	}
     }
 
     @FXML
     private void addMachinesFromURLButtonAction(ActionEvent event) {
-    	
+    	if (!addMachinesFromURLField.getText().isEmpty()) {
+    		try {
+				URL u = new URL(addMachinesFromURLField.getText());
+				int count = Wazaa.getMachinesFromURL(u);
+				if (count == 0) {
+					// TODO: add error popup
+				}
+			} catch (MalformedURLException e) {
+				// TODO: add error popup
+			}
+    	}
     }
 
     @FXML
     private void removeSelectedMachinesButtonAction(ActionEvent event) {
 		Wazaa.getMachines()
 			.removeAll(machinesList.getSelectionModel().getSelectedItems());
-		refreshMachinesList();
     }
 
-	public void refreshMachinesList() {
+	public synchronized void refreshMachinesList() {
 		ObservableList<Machine> list = machinesList.getItems();
 		machinesList.setItems(null);
 		machinesList.setItems(list);
