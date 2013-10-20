@@ -3,6 +3,8 @@ package wazaa.ui;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.nio.file.FileSystem;
+import java.nio.file.Paths;
 import java.util.ResourceBundle;
 
 import wazaa.Wazaa;
@@ -14,6 +16,8 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
+import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleButton;
@@ -21,7 +25,9 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.DirectoryChooser;
+import javafx.stage.FileChooser;
 import javafx.stage.Popup;
+import javafx.stage.FileChooser.ExtensionFilter;
 
 public class StartScreen implements Initializable {
     @FXML
@@ -37,6 +43,23 @@ public class StartScreen implements Initializable {
 	@FXML
 	private TextField shareFolderField;
 	private DirectoryChooser shareDirChooser = new DirectoryChooser();
+	
+    @FXML
+    private Button machinesFileButton;
+    private FileChooser machinesFC = new FileChooser();
+
+    @FXML
+    private CheckBox machinesFileCheckBox;
+
+    @FXML
+    private TextField machinesFileField;
+    private File initialMachinesFile;
+
+    @FXML
+    private CheckBox machinesURLCheckBox;
+
+    @FXML
+    private TextField machinesURLField;
 	
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
@@ -72,6 +95,15 @@ public class StartScreen implements Initializable {
 						} catch (NumberFormatException e) {}
 					}
 		});
+		initialMachinesFile = new File(Wazaa.DEFAULTMACHINESFILE);
+		machinesFileCheckBox.setSelected(true);
+		machinesFileField.setText(
+				initialMachinesFile.getAbsolutePath());
+    	machinesFC.setTitle("Open machines file");
+		machinesFC.setInitialDirectory(
+				Paths.get("").toAbsolutePath().toFile());
+    	machinesFC.getExtensionFilters().add(new ExtensionFilter(
+    			"JSON", "*.json", "*.txt"));
 	}
 	
 	@FXML
@@ -83,8 +115,14 @@ public class StartScreen implements Initializable {
 				if (port >= 0 && port <= 65535) {
 					HTTPServer srv = new HTTPServer(port);
 					Wazaa.setHTTPServer(srv);
-					// TODO: tmp
-					Wazaa.getMachinesFromFile(Wazaa.DEFAULTMACHINESFILE);
+					
+					if (machinesFileCheckBox.isSelected() &&
+							initialMachinesFile != null) {
+						Wazaa.getMachinesFromFile(
+								initialMachinesFile.
+								getAbsolutePath().toString());
+					}
+					
 					try {
 						Wazaa.prepareShareFolder();
 						
@@ -186,5 +224,27 @@ public class StartScreen implements Initializable {
     		shareFolderField.setText(folder.toString());
     		Wazaa.setShareFolder(folder);
     	}
+    }
+    
+    @FXML
+    private void machinesFileButtonAction(ActionEvent event) {
+    	File file = machinesFC.showOpenDialog(
+    			machinesFileButton.getScene().getWindow());
+    	if (file != null) {
+    		initialMachinesFile = file;
+    		machinesFileField.setText(file.getAbsolutePath());
+    	}
+    }
+
+    @FXML
+    private void machinesFileCheckBoxAction(ActionEvent event) {
+    	if (initialMachinesFile == null) {
+    		machinesFileCheckBox.setSelected(false);
+    	}
+    }
+
+    @FXML
+    private void machinesURLCheckBoxAction(ActionEvent event) {
+    	
     }
 }

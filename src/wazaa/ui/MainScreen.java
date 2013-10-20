@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.file.InvalidPathException;
+import java.nio.file.Paths;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -159,8 +160,9 @@ public class MainScreen implements Initializable {
 		sharedFilesFileNameCol.setCellValueFactory(
 				new PropertyValueFactory<WazaaFile, String>("fileName"));
 		// machines tab
-		machinesFC.setInitialDirectory(Wazaa.getShareFolderPathForFile("").toFile());
     	machinesFC.setTitle("Open machines file");
+		machinesFC.setInitialDirectory(
+				Paths.get("").toAbsolutePath().toFile());
     	machinesFC.getExtensionFilters().add(new ExtensionFilter(
     			"JSON", "*.json", "*.txt"));
 		
