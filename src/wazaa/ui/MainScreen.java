@@ -150,7 +150,7 @@ public class MainScreen implements Initializable {
 					}
 		});
 		downloadFC.setTitle("Choose save location");
-		downloadFC.setInitialDirectory(Wazaa.getShareFilePath("").toFile());
+		downloadFC.setInitialDirectory(Wazaa.getShareFolderPath().toFile());
 		// downloads tab
 		downloadsList.setItems(
 				FXCollections.observableList(
@@ -160,7 +160,7 @@ public class MainScreen implements Initializable {
 				new PropertyValueFactory<WazaaFile, String>("fileName"));
 		refreshSharedFilesButtonAction(null);
 		// machines tab
-		machinesFC.setInitialDirectory(Wazaa.getShareFilePath("").toFile());
+		machinesFC.setInitialDirectory(Wazaa.getShareFolderPathForFile("").toFile());
     	machinesFC.setTitle("Open machines file");
     	machinesFC.getExtensionFilters().add(new ExtensionFilter(
     			"JSON", "*.json", "*.txt"));
@@ -309,7 +309,7 @@ public class MainScreen implements Initializable {
     		ActionEvent event) {
     	try {
 			Desktop.getDesktop().browse(
-							Wazaa.getShareFilePath("").toUri());
+							Wazaa.getShareFolderPath().toUri());
 		} catch (InvalidPathException | IOException e) {
 			final Popup p = new Popup();
 			VBox vBox = new VBox();
@@ -333,11 +333,17 @@ public class MainScreen implements Initializable {
     		System.out.println("HERE");
     		String[] parts = addMachineField.getText().split(":");
     		System.out.println("HERE2");
-    		if (!(parts.length == 2 && 
-    				Wazaa.addMachine(parts[0], parts[1]))) {
-    			// TODO: add error popup
+    		if (parts.length >= 2) {
+    			String port = parts[parts.length - 1];
+    			String host = parts[0];
+    			for (int i = 1; i < parts.length - 1; i++) {
+    				host += ":" + parts[i];
+    			}
+    			System.out.println("host: " + host + " p: " + port);
+    			if (!Wazaa.addMachine(host, port)) {
+        			// TODO: add error popup
+    			}
     		}
-    		System.out.println("HERE3");
     	}
     }
 
@@ -370,6 +376,7 @@ public class MainScreen implements Initializable {
     private void removeSelectedMachinesButtonAction(ActionEvent event) {
 		Wazaa.getMachines()
 			.removeAll(machinesList.getSelectionModel().getSelectedItems());
+		refreshMachinesList();
     }
 
 	public synchronized void refreshMachinesList() {

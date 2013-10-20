@@ -10,17 +10,17 @@ import java.util.ArrayList;
 public class FileIOUtil {
 	public static byte[] getFileBytes(String fileName) 
 			throws IOException, InvalidPathException {
-		return Files.readAllBytes(Wazaa.getShareFilePath(fileName));
+		return Files.readAllBytes(Wazaa.getShareFolderPathForFile(fileName));
 	}
 	
 	public static String getFileContentType(String fileName)
 			throws InvalidPathException, IOException {
-		return Files.probeContentType(Wazaa.getShareFilePath(fileName));
+		return Files.probeContentType(Wazaa.getShareFolderPathForFile(fileName));
 	}
 	
 	public static ArrayList<WazaaFile> findFiles(final String search) {
 		ArrayList<WazaaFile> foundFiles = new ArrayList<WazaaFile>();
-		Path sharePath = Wazaa.getShareFilePath("");
+		Path sharePath = Wazaa.getShareFolderPath();
 		
 		if (search != null) {
 			DirectoryStream.Filter<Path> filter = 
@@ -50,7 +50,7 @@ public class FileIOUtil {
 				if (Files.isDirectory(file)) {
 					findFilesRecursivelyFromDirStream(
 							filter, foundFiles, 
-							Wazaa.getShareFilePath(
+							Wazaa.getShareFolderPathForFile(
 									file.getFileName().toString()),
 							shareFolder);
 				} else if (filter.accept(file)) {

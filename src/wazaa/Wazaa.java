@@ -1,6 +1,7 @@
 package wazaa;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -45,14 +46,13 @@ public class Wazaa {
 	public static final String DEFAULTMACHINESFILE = "machines.txt";
 	public static final int DEFAULTTTL = 5;
 	
-	private static String shareFolder = "wazaashare/";
+	private static File shareFolder = new File("wazaashare/");
 	
 	private static List<Machine> machines = 
 			Collections.synchronizedList(new ArrayList<Machine>());
 	
 	public static void main(String[] args) {
-		Path sharePath = FileSystems.getDefault().getPath(shareFolder);
-		prepareShareFolder(sharePath);
+		prepareShareFolder(shareFolder.toPath());
 		
 		Application.launch(WazaaJFXGUI.class, args);
 	}
@@ -75,9 +75,19 @@ public class Wazaa {
 				+ sharePath.toAbsolutePath().toString());
 	}
 	
-	public static Path getShareFilePath(String fileName) 
+	public static void setShareFolder(File shareFolder) {
+		Wazaa.shareFolder = shareFolder; 
+	}
+	
+	public static Path getShareFolderPath() 
 			throws InvalidPathException {
-		return FileSystems.getDefault().getPath(shareFolder + fileName);
+		return shareFolder.toPath();
+	}
+	
+	public static Path getShareFolderPathForFile(String fileName) 
+			throws InvalidPathException {
+		return FileSystems.getDefault().getPath(
+				shareFolder.toString() + "/" + fileName);
 	}
 
 	public static int getMachinesFromFile(String fileName) {
