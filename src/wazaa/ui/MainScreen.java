@@ -61,9 +61,6 @@ public class MainScreen implements Initializable {
     private TableColumn<WazaaFoundFile, String> fileSearchPeerCol;
 
     @FXML
-    private TableColumn<WazaaFoundFile, String> fileSearchSizeCol;
-    
-    @FXML
     private TextField fileSearchField;
 
     @FXML
@@ -84,9 +81,6 @@ public class MainScreen implements Initializable {
 
     @FXML
     private TableColumn<WazaaFile, String> sharedFilesFileNameCol;
-
-    @FXML
-    private TableColumn<WazaaFile, String> sharedFilesFileSizeCol;
     
     @FXML
     private Button sharedFilesShowShareFolderButton;
