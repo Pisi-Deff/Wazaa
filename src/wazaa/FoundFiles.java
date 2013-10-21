@@ -1,5 +1,6 @@
 package wazaa;
 
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -16,7 +17,12 @@ public class FoundFiles {
 					Collections.synchronizedList(
 							new ArrayList<WazaaFoundFile>()));
 		}
-		if (!foundFiles.get(searchID).contains(file)) {
+		boolean notMyMachine = true;
+		try {
+			notMyMachine = !Wazaa.isMyMachine(file.getMachine());
+		} catch (UnknownHostException e) { }
+		if (!foundFiles.get(searchID).contains(file) &&
+				notMyMachine) {
 			foundFiles.get(searchID).add(file);
 		}
 	}
