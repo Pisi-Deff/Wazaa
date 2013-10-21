@@ -97,9 +97,11 @@ public class StartScreen implements Initializable {
 					}
 		});
 		initialMachinesFile = new File(Wazaa.DEFAULTMACHINESFILE);
-		machinesFileCheckBox.setSelected(true);
-		machinesFileField.setText(
-				initialMachinesFile.getAbsolutePath());
+		if (initialMachinesFile.exists()) {
+			machinesFileCheckBox.setSelected(true);
+			machinesFileField.setText(
+					initialMachinesFile.getAbsolutePath());
+		}
     	machinesFC.setTitle("Open machines file");
 		machinesFC.setInitialDirectory(
 				Paths.get("").toAbsolutePath().toFile());
