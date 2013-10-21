@@ -48,7 +48,7 @@ public class Download {
 	}
 	
 	public synchronized boolean isFinished() {
-		return httpClient.getResponseDone();
+		return httpClient.getResponseDone() || !httpClient.isAlive();
 	}
 	
 	public synchronized boolean isWritten() {
@@ -56,8 +56,10 @@ public class Download {
 	}
 	
 	public String getStatus() {
-		if (isFinished()) {
+		if (httpClient.getResponseDone()) {
 			return "Finished";
+		} else if (!httpClient.isAlive()) {
+			return "Failed";
 		} else {
 			return "Downloading";
 		}
