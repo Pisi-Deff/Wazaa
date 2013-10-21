@@ -129,7 +129,8 @@ public class StartScreen implements Initializable {
 					Wazaa.setHTTPServer(srv);
 					
 					if (machinesFileCheckBox.isSelected() &&
-							initialMachinesFile != null) {
+							initialMachinesFile != null &&
+							initialMachinesFile.exists()) {
 						Wazaa.getMachinesFromFile(
 								initialMachinesFile.
 								getAbsolutePath().toString());
