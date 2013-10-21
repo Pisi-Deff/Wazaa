@@ -18,6 +18,7 @@ import wazaa.Wazaa;
 import wazaa.WazaaFile;
 import wazaa.WazaaFoundFile;
 import wazaa.http.HTTPUtil;
+import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
@@ -297,10 +298,16 @@ public class MainScreen implements Initializable {
     	}
     }
 
-	public synchronized void refreshDownloadsList() {
-		ObservableList<Download> list = downloadsList.getItems();
-		downloadsList.setItems(null);
-		downloadsList.setItems(list);
+	public void refreshDownloadsList() {
+		Platform.runLater(new Runnable() {
+			@Override
+			public void run() {
+				ObservableList<Download> list = 
+						downloadsList.getItems();
+				downloadsList.setItems(null);
+				downloadsList.setItems(list);
+			}
+		});
 	}
 
     @FXML

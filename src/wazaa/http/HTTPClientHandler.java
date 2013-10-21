@@ -4,8 +4,10 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
 import java.net.InetAddress;
 import java.net.Socket;
+import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.net.UnknownHostException;
 import java.nio.file.InvalidPathException;
@@ -137,26 +139,39 @@ public class HTTPClientHandler extends Thread {
 						"Content-Length:", "");
 				try {
 					contentLength = Integer.parseInt(line.trim());
+					System.out.println(
+							"Found content length: " + contentLength);
 				} catch (NumberFormatException e) { }
 			}
 		}
 		
 		if (contentLength == 0) {
-			answer = "1";
+			while (br.ready()) {
+				char c = (char) br.read();
+				if (c == -1) {
+					break;
+				}
+				data += c;
+			}
+		} else {
+			for (int i = 0; i < contentLength; i++) {
+				char c = (char) br.read();
+				if (c == -1) {
+					break;
+				}
+				data += c;
+			}
 		}
 		
-		for (int i = 0; i < contentLength; i++) {
-			char c = (char) br.read();
-			if (c == -1) {
-				break;
-			}
-			data += c;
-		}
+		System.out.println("Received data: " + data);
 		
 		if (!data.isEmpty()) {
 			try {
 				JsonObject json = JsonObject.readFrom(data);
-				String id = json.get("id").asString();
+				String id = "";
+				try {
+					id = json.get("id").asString();
+				} catch (Throwable e) { }
 				JsonArray files = json.get("files").asArray();
 				for (JsonValue valFile : files) {
 					JsonObject file = valFile.asObject();
@@ -184,7 +199,10 @@ public class HTTPClientHandler extends Thread {
 		HTTPResponse resp = null;
 		if (commandArgs != null
 				&& commandArgs.containsKey("fullname")) {
-			String fileName = commandArgs.get("fullname");
+			String fileName = "";
+			try {
+				fileName = URLDecoder.decode(commandArgs.get("fullname"), "UTF-8");
+			} catch (UnsupportedEncodingException e1) { }
 			if (fileName != null) {
 				try {
 					resp = new HTTPResponse200(
@@ -207,7 +225,7 @@ public class HTTPClientHandler extends Thread {
 		return resp;
 	}
 
-	private static HTTPResponse doSearchFile(Map<String, String> commandArgs)
+	private HTTPResponse doSearchFile(Map<String, String> commandArgs)
 			throws IOException {
 		/*
 		 * name: otsitav string (peab olema failinimes)
@@ -239,7 +257,7 @@ public class HTTPClientHandler extends Thread {
 						&& sendport > 0 && sendport < 65535
 						&& ttl >= 0) {
 					if (ttl > 1) {
-						HTTPUtil.sendSearchFileReqs(commandArgs);
+						HTTPUtil.sendSearchFileReqs(commandArgs, false);
 					}
 					ArrayList<WazaaFile> foundFiles = 
 							FileIOUtil.findFiles(name);
@@ -261,8 +279,9 @@ public class HTTPClientHandler extends Thread {
 		return new HTTPResponse200("text/plain", answer);
 	}
 	
-	private static JsonObject buildFoundFileJson(
-			ArrayList<WazaaFile> foundFiles, Map<String, String> commandArgs) {
+	private JsonObject buildFoundFileJson(
+			ArrayList<WazaaFile> foundFiles, 
+			Map<String, String> commandArgs) {
 //		{ "id": "wqeqwe23",
 //			  "files":
 //			  [ 
@@ -279,6 +298,7 @@ public class HTTPClientHandler extends Thread {
 		
 		try {
 			String myIP = InetAddress.getLocalHost().getHostAddress();
+			myIP = socket.getLocalAddress().getHostAddress();
 			for (WazaaFile wazaaFile : foundFiles) {
 				JsonObject file = new JsonObject();
 				file.add("ip", myIP);

@@ -1,7 +1,11 @@
 package wazaa.http;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.net.InetAddress;
+import java.net.InetSocketAddress;
+import java.net.Socket;
+import java.net.URLEncoder;
 import java.net.UnknownHostException;
 import java.util.Map;
 
@@ -13,7 +17,10 @@ public class HTTPUtil {
 	public static String buildSearchFileCommand(
 			Map<String, String> commandArgs) {
 		StringBuilder s = new StringBuilder("searchfile?");
-		s.append("name=" + commandArgs.get("name")); 
+		try {
+			s.append("name=" + 
+					URLEncoder.encode(commandArgs.get("name"), "UTF-8"));
+		} catch (UnsupportedEncodingException e1) { } 
 		s.append("&sendip=" + commandArgs.get("sendip"));
 		s.append("&sendport=" + commandArgs.get("sendport"));
 		Integer ttl = Integer.parseInt(commandArgs.get("ttl"));
@@ -44,9 +51,9 @@ public class HTTPUtil {
 		return s.toString();
 	}
 
-	public static void sendSearchFileReqs(Map<String, String> commandArgs)
+	public static void sendSearchFileReqs(
+			Map<String, String> commandArgs, boolean mySearch)
 			throws UnknownHostException {
-		String command = buildSearchFileCommand(commandArgs);
 		String[] noaskMachines = null;
 		if (commandArgs.containsKey("noask")
 			&& !commandArgs.get("noask").isEmpty()) {
@@ -75,14 +82,28 @@ public class HTTPUtil {
 				}
 			}
 			try {
-				new HTTPClient(m, "GET", command);
+				if (mySearch) {
+					Socket s = new Socket();
+					s.connect(new InetSocketAddress(
+							m.getIP(), m.getPort()), 300);
+					commandArgs.put("sendip", 
+							s.getLocalAddress().getHostAddress());
+					s.close();
+				}
+				new HTTPClient(m, "GET", 
+						buildSearchFileCommand(commandArgs));
 			} catch (IOException e) { }
 		}
 	}
 
 	public static HTTPClient sendGetFileReq(WazaaFoundFile file)
 			throws IOException {
+		String filename = file.getFileName();
+		try {
+			filename = URLEncoder.encode(filename, "UTF-8");
+			System.out.println("enc'd: " + filename);
+		} catch (Throwable e) { }
 		return new HTTPClient(file.getMachine(), "GET", 
-				"getfile?fullname=" + file.getFileName());
+				"getfile?fullname=" + filename);
 	}
 }

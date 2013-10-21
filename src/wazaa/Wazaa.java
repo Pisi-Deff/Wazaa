@@ -197,7 +197,7 @@ public class Wazaa {
 					String.valueOf(Wazaa.getHTTPServer().getPort()));
 			commandArgs.put("ttl", String.valueOf(Wazaa.DEFAULTTTL + 1));
 			commandArgs.put("id", uuid);
-			HTTPUtil.sendSearchFileReqs(commandArgs);
+			HTTPUtil.sendSearchFileReqs(commandArgs, true);
 			return uuid;
 		} catch (UnsupportedEncodingException | 
 				UnknownHostException e) { }

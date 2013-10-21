@@ -25,6 +25,7 @@ public class Download {
 					out = 
 							new FileOutputStream(saveLocation);
 					out.write(fileBytes);
+					
 					isWritten = true;
 					System.out.println("File saved to: " + 
 							saveLocation.getAbsolutePath().toString());

@@ -17,7 +17,16 @@ public class WazaaFoundFile extends WazaaFile {
 			throws NumberFormatException, UnknownHostException {
 		String name = file.get("name").asString();
 		String ip = file.get("ip").asString();
-		String port = file.get("port").asString();
+		String port = "";
+		try {
+			port = file.get("port").asString();
+		} catch (Throwable e) {}
+		try {
+			port = String.valueOf(file.get("port").asInt());
+		} catch (Throwable e) { }
+		if (port.isEmpty()) {
+			throw new NumberFormatException();
+		}
 		Machine m = new Machine(ip, port);
 		return new WazaaFoundFile(name, m);
 	}

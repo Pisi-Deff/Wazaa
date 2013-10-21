@@ -9,6 +9,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.net.URLDecoder;
 
 import wazaa.Machine;
 import wazaa.Wazaa;
@@ -148,7 +149,7 @@ public class HTTPClient extends Thread {
 				responseFileName = disposition.substring(index + 10,
 						disposition.length() - 1);
 			}
-		} else if (url.toString().matches("/getfile\\?")) {
+		} else if (url.toString().matches(".*/getfile.+")) {
 			// extracts file name from URL
 			int lastSlash = url.toString().lastIndexOf("/");
 			int lastEquals = url.toString().lastIndexOf("=");
@@ -157,6 +158,14 @@ public class HTTPClient extends Thread {
 			responseFileName = url.toString().substring(
 					latter + 1,
 					url.toString().length());
+			try {
+				responseFileName = 
+						URLDecoder.decode(responseFileName, "UTF-8");
+			} catch (Throwable e) { }
+		}
+		if (responseFileName != null) {
+			System.out.println("Response file name: "
+					+ responseFileName);
 		}
 	}
 	
