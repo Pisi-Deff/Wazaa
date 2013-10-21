@@ -246,7 +246,11 @@ public class Wazaa {
 		} catch (Throwable e) {
 			e.printStackTrace();
 		}
-		return (m.getIP().getHostAddress().equals(myIP) &&
+		return (
+				(m.getIP().getHostAddress().equals(myIP) ||
+					m.getIP().getHostAddress().equals("localhost") ||
+					m.getIP().getHostAddress().equals("127.0.0.1")
+					) &&
 			m.getPort() == myPort);
 	}
 
